@@ -3,18 +3,10 @@ library("read.gt3x")
 library("tidyverse")
 library("data.table")
 library("tictoc")
-# STEPS OF THE FUNCTION:
-# Input -> File path 
-# 1 - Unzip the file to a temporary folder
-# 2 - Read the .txt file inside the temporary folder
-# 3 - Write the header in the .csv format
-# 4 - Read the binary file inside the temporary folder
-# 5 - Save the acceleration in the save .csv file as step 3
-# 6 - Delete the temporary folder
 
-#' substrRight
+#' @title substrRight
 #' 
-#' Extracting n characters from the end of the string "jumping" last j characters
+#' @description Extracting n characters from the end of the string "jumping" last j characters
 #' @param x the string to be manipulated
 #' @param n the number of characters to extract from the string
 #' @param j the number of characters to ignore in the end of the string
@@ -33,11 +25,11 @@ substrRight <- function(x, n = nchar(x)- j, j = 0){
 
   ## Transforming date to the format used in csv output from Actilife
   
-  #' transform_dates
+  #' @title transform_dates
   #' 
-  #' Changing the formatting of the date-time information
+  #' @description Changing the formatting of the date-time information
   #' 
-  #' Util to change the format of the date-times to the format used in the .gt3x file
+  #' @details Util to change the format of the date-times to the format used in the .gt3x file
   #' @param x the object containing the date to be changed.
   
   transform_dates <- function(x) {
@@ -45,9 +37,9 @@ substrRight <- function(x, n = nchar(x)- j, j = 0){
   }
   
   
-  #' divide_1e7 
+  #' @title divide_1e7 
   #' 
-  #' util function to the right format of dates
+  #' @description util function to the right format of dates
   #' @param y value to be divided by 1e7
   
   divide_1e7 <- function(y) {
@@ -61,7 +53,7 @@ substrRight <- function(x, n = nchar(x)- j, j = 0){
   #' 
   #' @description Reads the metadata of the gt3x file 
   #' 
-  #' Reads the metadata registered in the .txt file that is contained inside .gt3x file provided by the actilife software
+  #' @deteails Reads the metadata registered in the .txt file that is contained inside .gt3x file provided by the actilife software
   #' @param file_txt The path to the desired .txt file
   
   
@@ -84,11 +76,11 @@ substrRight <- function(x, n = nchar(x)- j, j = 0){
   #### SAVE HEADER FUNCTION
   ## Saves header in the same format as the Actilife RAW csv output.
   
-  #' save_header
+  #' @title save_header
   #' 
-  #' Saves .gt3x metadata as header
+  #' @description Saves .gt3x metadata as header
   #'
-  #' Saves the header extracted from the .gt3x file with the read_info function in the .csv extension (look at read_info function)
+  #' @details Saves the header extracted from the .gt3x file with the read_info function in the .csv extension (look at read_info function)
   #' @param infofile default = info_filef data frame containing the metadata generated through the read_info function
   #' @param dest_csv  default = ddestination folder. the folder to which you want to generate the header file
   #' @param files_list_i the name of the file that is going to be saved
@@ -115,11 +107,11 @@ substrRight <- function(x, n = nchar(x)- j, j = 0){
   }
   
 
-  #' header_csv
+  #' @title header_csv
   #' 
-  #' Reads the metadata from gt3x files and savaes as csv
+  #' @description Reads the metadata from gt3x files and savaes as csv
   #' 
-  #' Reads the metadata from the txt file located inside the .gt3x file provided by actigraph using the read_info function and saves it as a csv document using the save_header function.
+  #' @details Reads the metadata from the txt file located inside the .gt3x file provided by actigraph using the read_info function and saves it as a csv document using the save_header function.
   #' @param origin the path to the .gt3xfile to be converted
   #' @param dest default = same directory of the data.  the destination were the .csv file is going to be placed (to be implemented)
   #' @import "read.gt3x"
@@ -179,11 +171,11 @@ substrRight <- function(x, n = nchar(x)- j, j = 0){
  
   ## Saves acceleration data in the same format as Actilife RAW csv output
   
-  #' save_accel
+  #' @title save_accel
   #' 
-  #' Saves acceleration of the given file 
+  #' @description  Saves acceleration of the given file 
   #' 
-  #' Reads the binary data inside the .gt3x file and saves it in .csv format
+  #' @details Reads the binary data inside the .gt3x file and saves it in .csv format
   #' @param acc.file the path to te .gt3x file 
   #' @import "read.gt3x"
   #' @import "tidyverse"
@@ -239,11 +231,11 @@ save_accel <- function(acc.file){
 ## FUNCTION THAT CONVERTS A GT3X FILE IN CSV FILE
 # Path refers to the folder where the GT3X files are stored
 
-#' gt3x_2_csv
+#' @title gt3x_2_csv
 #' 
-#' Converts a given .gt3x file to .csv format
+#' @description Converts a given .gt3x file to .csv format
 #' 
-#' Reads both the .txt file and the .bin file located inside the .gt3x file given by actilife software and converts it to a csv file in the save format of the .csv file extracted from the sofrtware.
+#' @details Reads both the .txt file and the .bin file located inside the .gt3x file given by actilife software and converts it to a csv file in the save format of the .csv file extracted from the sofrtware.
 #' @param path the path to the given file 
 #' @param dest_csv desired destination folder
 
