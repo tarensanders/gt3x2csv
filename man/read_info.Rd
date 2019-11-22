@@ -10,7 +10,5 @@ read_info(file_txt = file_txt)
 \item{file_txt}{The path to the desired .txt file}
 }
 \description{
-Reads the metadata of the gt3x file 
-
-Reads the metadata registered in the .txt file that is contained inside .gt3x file provided by the actilife software
+Reads the metadata of the gt3x file
 }
