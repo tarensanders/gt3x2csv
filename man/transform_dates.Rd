@@ -2,7 +2,7 @@
 % Please edit documentation in R/gt3x_2_csv.R
 \name{transform_dates}
 \alias{transform_dates}
-\title{gt3x_2_csv}
+\title{transform_dates}
 \usage{
 transform_dates(x)
 }
@@ -10,5 +10,10 @@ transform_dates(x)
 \item{x}{the object containing the date to be changed.}
 }
 \description{
+Changing the formatting of the date-time information
+}
+\details{
 gt3x_2_csv
+
+Util to change the format of the date-times to the format used in the .gt3x file
 }
