@@ -114,8 +114,8 @@ substrRight <- function(x, n = nchar(x)- j, j = 0){
   #' @details Reads the metadata from the txt file located inside the .gt3x file provided by actigraph using the read_info function and saves it as a csv document using the save_header function.
   #' @param origin the path to the .gt3xfile to be converted
   #' @param dest default = same directory of the data.  the destination were the .csv file is going to be placed (to be implemented)
-  #' @import "read.gt3x"
-  #' @import "tidyverse"
+  #' @import read.gt3x
+  #' @import tidyverse
   
   header_csv <- function(origin) {
   
@@ -177,9 +177,9 @@ substrRight <- function(x, n = nchar(x)- j, j = 0){
   #' 
   #' @details Reads the binary data inside the .gt3x file and saves it in .csv format
   #' @param acc.file the path to te .gt3x file 
-  #' @import "read.gt3x"
-  #' @import "tidyverse"
-  #' @import "tictoc"
+  #' @import read.gt3x
+  #' @import tidyverse
+  #' @import tictoc
   
 save_accel <- function(acc.file){
   
