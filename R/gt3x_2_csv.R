@@ -11,8 +11,8 @@ library("tictoc")
 #' @param n the number of characters to extract from the string
 #' @param j the number of characters to ignore in the end of the string
 
-substrRight <- function(x, n = nchar(x)- j, j = 0){
-   substr(x, nchar(x)-(n+j)+1, nchar(x)-j)
+substrRight <- function( x, n = nchar( x ) - j, j = 0){
+   substr( x, nchar( x ) - ( n + j ) + 1, nchar( x ) - j)
 }
 
 
@@ -73,13 +73,13 @@ substrRight <- function(x, n = nchar(x)- j, j = 0){
   #' @description Saves .gt3x metadata as csv header
   #'
   #' @details Saves the header extracted from the .gt3x file with the read_info function in the .csv extension (look at read_info function)
-  #' @param infofile default = info_filef data frame containing the metadata generated through the read_info function
+  #' @param infofile default = info_filedf data frame containing the metadata generated through the read_info function
   #' @param dest_csv  default = ddestination folder. the folder to which you want to generate the header file
   #' @param files_list_i the name of the file that is going to be saved
   #' @import hms
   #' @import lubridate
   
-  save_header <- function(df_file = info_filef, dest_csv = csv_folder, file_id)
+  save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_id)
   {
      #formatting the metadata to the actilife header form
      
@@ -157,9 +157,9 @@ substrRight <- function(x, n = nchar(x)- j, j = 0){
      
      file_txt <- paste0( unzip_folder_addres, "/info.txt")
      
-     info_filef <- read_info( file_txt)
+     info_filedf <- read_info( file_txt)
      
-     save_header( df_file = info_filef, dest_csv = csv_folder, file_id = file_id)
+     save_header( df_file = info_filedf, dest_csv = csv_folder, file_id = file_id)
      
      message("Header saved as:  ", csv_folder, "/", file_id, "RAW.csv")
      }
