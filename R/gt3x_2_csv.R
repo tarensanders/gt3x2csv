@@ -1,9 +1,4 @@
 
-library("read.gt3x")
-library("tidyverse")
-library("data.table")
-library("tictoc")
-
 #' @title substrRight
 #' 
 #' @description Extracting n characters from the end of the string "jumping" last j characters
