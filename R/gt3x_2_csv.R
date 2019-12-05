@@ -6,20 +6,12 @@
 #' @param n the number of characters to extract from the string
 #' @param j the number of characters to ignore in the end of the string
 
-substrRight <- function(x, n = nchar(x)- j, j = 0){
-   substr(x, nchar(x)-(n+j)+1, nchar(x)-j)
+substrRight <- function( x, n = nchar( x ) - j, j = 0){
+   substr( x, nchar( x ) - ( n + j ) + 1, nchar( x ) - j)
 }
 
-#' gt3x_2_csv
-#'
-#' @import read.gt3x
-#' @import tidyverse
-#' @import data.table
-#' @import lubridate
-#' @import hms
 
-  ## Transforming date to the format used in csv output from Actilife
-  
+
   #' @title transform_dates
   #' 
   #' @description Changing the formatting of the date-time information
@@ -50,7 +42,7 @@ substrRight <- function(x, n = nchar(x)- j, j = 0){
   #' 
   #' @deteails Reads the metadata registered in the .txt file that is contained inside .gt3x file provided by the actilife software
   #' @param file_txt The path to the desired .txt file
-  
+  #' @import tidyverse
   
   read_info <- function(file_txt = file_txt) {
      
@@ -73,32 +65,34 @@ substrRight <- function(x, n = nchar(x)- j, j = 0){
   
   #' @title save_header
   #' 
-  #' @description Saves .gt3x metadata as header
+  #' @description Saves .gt3x metadata as csv header
   #'
   #' @details Saves the header extracted from the .gt3x file with the read_info function in the .csv extension (look at read_info function)
-  #' @param infofile default = info_filef data frame containing the metadata generated through the read_info function
+  #' @param infofile default = info_filedf data frame containing the metadata generated through the read_info function
   #' @param dest_csv  default = ddestination folder. the folder to which you want to generate the header file
   #' @param files_list_i the name of the file that is going to be saved
+  #' @import hms
+  #' @import lubridate
   
-  save_header <- function(df_file = info_filef, dest_csv = csv_folder, file_id)
+  save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_id)
   {
      #formatting the metadata to the actilife header form
      
-     header_txt <- paste0("------------ Data File Created By ActiGraph GT3X+ ActiLife v6.13.4 Firmware v1.9.2 date format dd/MM/yyyy at 30 Hz  Filter Normal -----------\n",
-                          "Serial Number: ", df_file$Serial.Number, "\n",
-                          "Start Time ", hms::as_hms(df_file$Start.Date), "\n",
-                          "Start Date ", format(df_file$Start.Date, "%d/%m/%Y"), "\n",
-                          "Epoch Period (hh:mm:ss) 00:00:00\n",
-                          "Download Time ", hms::as_hms(df_file$Download.Date), "\n",
-                          "Download Date " , format(df_file$Download.Date, "%d/%m/%Y"), "\n",
-                          "Current Memory Address: 0\n",
-                          "Current Battery Voltage: ", sub(",", ".", df_file$Battery.Voltage),"     Mode = 12\n",
-                          "--------------------------------------------------\n")
-     
+     header_txt <- paste0( "------------ Data File Created By ActiGraph GT3X+ ActiLife v6.13.4 Firmware v1.9.2 date format dd/MM/yyyy at 30 Hz  Filter Normal -----------\n",
+                           "Serial Number: ", df_file$Serial.Number, "\n",
+                           "Start Time ", as_hms(df_file$Start.Date), "\n",
+                           "Start Date ", format(df_file$Start.Date, "%d/%m/%Y"), "\n",
+                           "Epoch Period (hh:mm:ss) 00:00:00\n",
+                           "Download Time ", as_hms(df_file$Download.Date), "\n",
+                           "Download Date ", format(df_file$Download.Date, "%d/%m/%Y"), "\n",
+                           "Current Memory Address: 0\n",
+                           "Current Battery Voltage: ", sub(",", ".", df_file$Battery.Voltage),"     Mode = 12\n",
+                           "--------------------------------------------------\n")
+ 
      # Writing the .csv document with the header
-     
+    
      cat(header_txt,
-         file = paste0(dest_csv,"/", file_id, "RAW.csv"))
+         file = paste0( dest_csv, "/", file_id, "RAW.csv"))
   }
   
 
@@ -112,56 +106,57 @@ substrRight <- function(x, n = nchar(x)- j, j = 0){
   #' @import read.gt3x
   #' @import tidyverse
   
-  header_csv <- function(origin) {
+  header_csv <- function( origin ) {
   
-    dest <- substrRight(origin, j = 13)
+    dest <- substrRight( origin, j = 13)
      
     #file name 
     
-    file_id <- substrRight(origin, 7, 5)
+    file_id <- substrRight( origin, 7, 5)
     
-    print(file_id)
+    print( file_id)
+    
      # Results directory
      
-     csv_folder <- paste0(dest, "/csv")
+     csv_folder <- paste0( dest, "/csv")
      
-     if (dir.exists(csv_folder) == FALSE) {
+     if ( dir.exists( csv_folder) == FALSE ) {
      
-     dir.create(csv_folder)
+     dir.create( csv_folder)
       
-     message("csv output folder created as: ", csv_folder) 
+     message( "csv output folder created as: ", csv_folder) 
         
      } else {
           
-       message("csv folder already exists")
+       message( "csv folder already exists")
        
         }
      
      # Unzipping the file 
      
-     unzip_single_gt3x(origin, location = paste0(dest, "/unzip"), verbose = FALSE)
+     unzip_single_gt3x( origin, location = paste0( dest, "/unzip"), verbose = FALSE)
      
      # Creating the path to the desired .txt file
      
      # Unzipped folder address
      
-     unzipath <- paste0(dest, "/unzip")
+     unzipath <- paste0( dest, "/unzip")
      
     
      # Unzipped folder address
     
      
-     unzip_folder_addres <- paste0(unzipath,"/", file_id)
+     unzip_folder_addres <- paste0( unzipath, "/", file_id)
      
      # Txt address
      
-     file_txt <- paste0(unzip_folder_addres, "/info.txt")
+     file_txt <- paste0( unzip_folder_addres, "/info.txt")
      
-     info_filef <- read_info(file_txt)
+     info_filedf <- read_info( file_txt)
      
-     save_header(df_file = info_filef, dest_csv = csv_folder, file_id = file_id)
+     save_header( df_file = info_filedf, dest_csv = csv_folder, file_id = file_id)
      
-     message("Header saved as:  ", csv_folder,"/", file_id, "RAW.csv")
+     message("Header saved as:  ", csv_folder, "/", file_id, "RAW.csv")
      }
  
   ## Saves acceleration data in the same format as Actilife RAW csv output
@@ -176,47 +171,47 @@ substrRight <- function(x, n = nchar(x)- j, j = 0){
   #' @import tidyverse
   #' @import tictoc
   
-save_accel <- function(acc.file){
+save_accel <- function( acc.file ) {
   
   #file name 
   
-  file_id <- substrRight(acc.file, 7, 5)
+  file_id <- substrRight( acc.file, 7, 5)
   
-  message ("Reading acceleration", file_id)
+  message ( "Reading acceleration", file_id)
   # Reading acceleration
   
-  accel <- read.gt3x(acc.file,
-                     imputeZeroes = TRUE)
+  accel <- read.gt3x( acc.file,
+                      imputeZeroes = TRUE)
   
-  accel_df <- as.data.frame(accel[,-4])
+  accel_df <- as.data.frame( accel[ ,-4])
   
-  accel_df$X <- as.character(accel_df$X)
-  accel_df$Y <- as.character(accel_df$Y)
-  accel_df$Z <- as.character(accel_df$Z)
+  accel_df$X <- as.character( accel_df$X )
+  accel_df$Y <- as.character( accel_df$Y )
+  accel_df$Z <- as.character( accel_df$Z )
   
-  names(accel_df) <- c("Accelerometer X",
-                       "Accelerometer Y",
-                       "Accelerometer Z")
+  names( accel_df ) <- c( "Accelerometer X",
+                        "Accelerometer Y",
+                        "Accelerometer Z")
   
   # Extracting the folder path
   
-  dest <- substrRight(acc.file, j = 13)
+  dest <- substrRight( acc.file, j = 13 )
   
   # Results directory
   
-  csv_folder <- paste0(dest, "/csv")
+  csv_folder <- paste0( dest, "/csv")
   
   # Writing acceleration data in csv:
   
-  message("Writing acceleration", file_id)
+  message( "Writing acceleration", file_id)
   
-  tic("Acceleration written ")
-  fwrite(x = accel_df,
-         file = paste0(csv_folder,"/", file_id, "RAW.csv"), 
-         append = TRUE,
-         sep = ",",
-         col.names = TRUE,
-         row.names = FALSE)
+  tic( "Acceleration written ")
+  fwrite( x = accel_df,
+          file = paste0( csv_folder, "/", file_id, "RAW.csv"), 
+          append = TRUE,
+          sep = ",",
+          col.names = TRUE,
+          row.names = FALSE )
   
   toc()
   
@@ -233,33 +228,39 @@ save_accel <- function(acc.file){
 #' @details Reads both the .txt file and the .bin file located inside the .gt3x file given by actilife software and converts it to a csv file in the save format of the .csv file extracted from the sofrtware.
 #' @param path the path to the given file 
 #' @param dest_csv desired destination folder
-
-gt3x_2_csv <- function(gt3x_file)
+#' @import read.gt3x
+#' @import tidyverse
+#' @import data.table
+#' @import lubridate
+#' @import hms
+#' 
+gt3x_2_csv <- function( gt3x_file )
   
 {
-  print("Started processing file")
+  print( "Started processing file" )
   
-  file_id <- substrRight(gt3x_file, 7, 5)
+  file_id <- substrRight( gt3x_file, 7, 5)
   
-  tic(paste("File number", i ,"named", file_id," processed"))
+  tic( paste( "File number", i ,"named", file_id, " processed" ) )
       
-  header_csv(gt3x_file)
+  header_csv( gt3x_file )
   
-  save_accel(gt3x_file)
+  save_accel( gt3x_file )
   
-  dest <- substrRight(gt3x_file, j = 13)
+  dest <- substrRight( gt3x_file, j = 13 )
   
-  file_id <- substrRight(gt3x_file, 7, 5)
+  file_id <- substrRight( gt3x_file, 7, 5 )
   
-  unzipath <- paste0(dest, "/unzip")
+  unzipath <- paste0( dest, "/unzip")
   
   
   # Unzipped folder address
   
   
-  unzip_folder_addres <- paste0(unzipath,"/", file_id)
+  unzip_folder_addres <- paste0( unzipath,"/", file_id )
   
-  unlink(unzip_folder_addres, recursive = TRUE)
+  unlink( unzip_folder_addres, recursive = TRUE )
+  
   toc()
 }  
 
