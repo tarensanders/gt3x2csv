@@ -5,6 +5,7 @@
 #' 
 #' Processes all the files of a given folder in pararllel using foreach function
 #' @param folder The folder where the files are located
+#' @param n.cores Default = ncores()-1. Specify the number of cores to be used in the operation
 #' @return a folder named csv with inside the folder where the .gt3x files are located
 #' @import tictoc
 #' @import foreach
