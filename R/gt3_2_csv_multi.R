@@ -6,7 +6,7 @@
 #' Lists all the .gt3x files in a given folder and converts it to the actilife RAW data csv file
 #' @param folder_path The folder where the files are located
 #' @import tictoc
-#' @return a folder named csv with inside the folder where the .gt3x files are located
+#' @return A folder named "csv" inside the folder where the .gt3x files are located
 #' 
 gt3x_folder_2_csv <- function(folder_path) {
   
