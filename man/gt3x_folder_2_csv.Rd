@@ -10,7 +10,7 @@ gt3x_folder_2_csv(folder_path)
 \item{folder_path}{The folder where the files are located}
 }
 \value{
-a folder named csv with inside the folder where the .gt3x files are located
+A folder named "csv" inside the folder where the .gt3x files are located
 }
 \description{
 Converts al the files inside a folder
