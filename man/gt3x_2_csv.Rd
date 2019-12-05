@@ -17,3 +17,8 @@ Converts a given .gt3x file to .csv format
 \details{
 Reads both the .txt file and the .bin file located inside the .gt3x file given by actilife software and converts it to a csv file in the save format of the .csv file extracted from the sofrtware.
 }
+\seealso{
+gt3x_folder_2_csv converts a folder
+
+gt3x_2_csv_par converts a a folder using paralell processing
+}

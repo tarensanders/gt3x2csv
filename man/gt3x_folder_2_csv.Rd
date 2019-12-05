@@ -18,3 +18,8 @@ Converts al the files inside a folder
 \details{
 Lists all the .gt3x files in a given folder and converts it to the actilife RAW data csv file
 }
+\seealso{
+gt3x_2_csv
+
+gt3x_2_csv_par
+}

@@ -7,7 +7,9 @@
 #' @param folder_path The folder where the files are located
 #' @import tictoc
 #' @return A folder named "csv" inside the folder where the .gt3x files are located
-#' 
+#' @seealso gt3x_2_csv
+#' @seealso gt3x_2_csv_par
+
 gt3x_folder_2_csv <- function(folder_path) {
   
   file_names<- list.files(folder_path,

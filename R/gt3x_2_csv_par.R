@@ -12,6 +12,9 @@
 #' @import parallel
 #' @import doSNOW
 #' @import tcltk
+#' @seealso gt3x_2_csv
+#' @seealso gt3x_folder_2_csv
+
 
 gt3x_2_csv_par <- function(folder, n.cores = detectCores()-1) {
 

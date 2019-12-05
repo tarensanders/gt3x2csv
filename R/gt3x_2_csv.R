@@ -233,7 +233,10 @@ save_accel <- function( acc.file ) {
 #' @import data.table
 #' @import lubridate
 #' @import hms
-#' 
+#' @seealso gt3x_folder_2_csv converts a folder 
+#' @seealso gt3x_2_csv_par converts a a folder using paralell processing
+ 
+
 gt3x_2_csv <- function( gt3x_file )
   
 {

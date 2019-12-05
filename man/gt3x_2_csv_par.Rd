@@ -20,3 +20,8 @@ Processing multiple gt3x files at the same time
 \details{
 Processes all the files of a given folder in pararllel using foreach function
 }
+\seealso{
+gt3x_2_csv
+
+gt3x_folder_2_csv
+}
