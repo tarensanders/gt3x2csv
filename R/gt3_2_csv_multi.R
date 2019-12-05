@@ -1,6 +1,3 @@
-source("gt3x_2_csv.R")
-
-library(tictoc)
 
 #' gt3x_folder_2_csv
 #' 
@@ -8,8 +5,9 @@ library(tictoc)
 #' 
 #' Lists all the .gt3x files in a given folder and converts it to the actilife RAW data csv file
 #' @param folder_path The folder where the files are located
-
-
+#' @import tictoc
+#' @return a folder named csv with inside the folder where the .gt3x files are located
+#' 
 gt3x_folder_2_csv <- function(folder_path) {
   
   file_names<- list.files(folder_path,
@@ -31,6 +29,3 @@ gt3x_folder_2_csv <- function(folder_path) {
   toc()
   
 }
-
-
-tempo_seq <- 3734.02
