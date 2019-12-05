@@ -8,6 +8,8 @@ gt3x_2_csv_par(folder, n.cores = detectCores() - 1)
 }
 \arguments{
 \item{folder}{The folder where the files are located}
+
+\item{n.cores}{Default = ncores()-1. Specify the number of cores to be used in the operation}
 }
 \value{
 a folder named csv with inside the folder where the .gt3x files are located
