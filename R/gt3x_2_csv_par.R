@@ -1,11 +1,3 @@
-source("gt3x_2_csv.R")
-
-
-library("tictoc")
-library("foreach")
-library("parallel")
-library("doSNOW")
-library("tcltk")
 
 #' gt3x_2_csv_par
 #' 
@@ -13,7 +5,12 @@ library("tcltk")
 #' 
 #' Processes all the files of a given folder in pararllel using foreach function
 #' @param folder The folder where the files are located
- 
+#' @return a folder named csv with inside the folder where the .gt3x files are located
+#' @import tictoc
+#' @import foreach
+#' @import parallel
+#' @import doSNOW
+#' @import tcltk
 
 gt3x_2_csv_par <- function(folder, n.cores = detectCores()-1) {
 
