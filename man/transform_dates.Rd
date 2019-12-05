@@ -13,7 +13,5 @@ transform_dates(x)
 Changing the formatting of the date-time information
 }
 \details{
-gt3x_2_csv
-
 Util to change the format of the date-times to the format used in the .gt3x file
 }
