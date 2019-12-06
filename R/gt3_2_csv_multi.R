@@ -12,7 +12,7 @@
 
 gt3x_folder_2_csv <- function(folder_path) {
   
-  file_names<- list.files(folder_path,
+  file_names <- list.files(folder_path,
                           pattern = ".gt3x",
                           full.names = TRUE)
   
