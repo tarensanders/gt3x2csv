@@ -2,8 +2,6 @@
 
 `gt3x2csv` is an R package designed to convert Actigraph gt3x files to csv files with the same data structure exported by the Actilife software.
 
-## Instalation
-
 ## Installation
 
 ``` r
