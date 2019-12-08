@@ -223,6 +223,8 @@ save_accel <- function( acc.file ) {
 #' @details Reads both the .txt file and the .bin file located inside the .gt3x file given by actilife software and converts it to a csv file in the save format of the .csv file extracted from the sofrtware.
 #' @param path the path to the given file 
 #' @param dest_csv desired destination folder
+#' 
+#' @export
 #' @import read.gt3x
 #' @import tidyverse
 #' @import data.table

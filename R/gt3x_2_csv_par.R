@@ -7,6 +7,7 @@
 #' @param folder The folder where the files are located
 #' @param n.cores Default = ncores()-1. Specify the number of cores to be used in the operation
 #' @return a folder named csv with inside the folder where the .gt3x files are located
+#' @export
 #' @import tictoc
 #' @import foreach
 #' @import parallel
