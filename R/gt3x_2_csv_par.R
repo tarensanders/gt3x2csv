@@ -23,7 +23,7 @@ gt3x_2_csv_par <- function(folder, n.cores = detectCores()-1) {
   
   tictoc:: tic ("Ready to process")
   
-  cluster <- makeSOCKcluster(n.cores)
+  cluster <- parallel::makePSOCKcluster(n.cores)
   
   registerDoSNOW(cluster)
   
