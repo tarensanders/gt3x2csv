@@ -4,7 +4,7 @@
 \alias{gt3x_2_csv_par}
 \title{gt3x_2_csv_par}
 \usage{
-gt3x_2_csv_par(folder, n.cores = detectCores() - 1)
+gt3x_2_csv_par(folder, n.cores = (parallel::detectCores()) - 1)
 }
 \arguments{
 \item{folder}{The folder where the files are located}

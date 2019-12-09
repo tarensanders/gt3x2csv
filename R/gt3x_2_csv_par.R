@@ -8,48 +8,45 @@
 #' @param n.cores Default = ncores()-1. Specify the number of cores to be used in the operation
 #' @return a folder named csv with inside the folder where the .gt3x files are located
 #' @export
-#' @import tictoc
-#' @import foreach
-#' @import parallel
-#' @import doSNOW
-#' @import tcltk
+#' @importFrom tcltk "tkProgressBar"
+#' @importFrom foreach "%dopar%"
 #' @seealso gt3x_2_csv
 #' @seealso gt3x_folder_2_csv
 
 
-gt3x_2_csv_par <- function(folder, n.cores = detectCores()-1) {
+
+gt3x_2_csv_par <- function(folder, n.cores = (parallel::detectCores())-1) {
 
   print("Preparing machine")
   
   tictoc:: tic ("Ready to process")
   
-  cluster <- makeSOCKcluster(n.cores)
+  cluster <- parallel::makePSOCKcluster(n.cores)
   
-  registerDoSNOW(cluster)
+  doSNOW::registerDoSNOW(cluster)
   
   
   file_names<- list.files(folder,
                           pattern = ".gt3x",
                           full.names = TRUE)
   
-  bar <- tkProgressBar(title = "Converting the gt3x files to csv. Progress:",
+ bar <- tcltk::tkProgressBar(title = "Converting the gt3x files to csv. Progress:",
                        min = 0,
                        max = length(file_names),
                        width = 500)
   
-  
-  progresso <- function(n) {setTkProgressBar(bar, n, label = paste0(round(n/length(file_names)*100, 0), "% completed"))}
+  progresso <- function(n) {tcltk::setTkProgressBar(bar, n, label = paste0(round(n/length(file_names)*100, 0), "% completed"))}
   opts <- list(progress = progresso)
   
   
-  toc()
+  tictoc::toc()
   
   tictoc::tic(paste("Processed", length(file_names), "files:"))
   
   print(paste("Started processing", length(file_names), "files"))
   
-  foreach (i = 1:length(file_names),
-           .export = c("gt3x_2_csv","substrRight", "divide_1e7","format_header", "header_csv", "read_info", "save_accel", "save_header", "transform_dates"),
+  foreach::foreach (i = 1:length(file_names),
+           .export = c("gt3x_2_csv","substrRight", "divide_1e7", "header_csv", "read_info", "save_accel", "save_header", "transform_dates"),
            .packages = c("tictoc", "read.gt3x", "tidyverse", "data.table", "tcltk"),
            .inorder = TRUE,
            .options.snow = opts, .errorhandling = "pass") %dopar% {
@@ -60,7 +57,7 @@ gt3x_2_csv_par <- function(folder, n.cores = detectCores()-1) {
   
   tictoc::toc()
   
-  stopCluster(cluster)
+  parallel::stopCluster(cluster)
   
   close(bar)
   

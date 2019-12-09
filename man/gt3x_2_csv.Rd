@@ -7,9 +7,7 @@
 gt3x_2_csv(gt3x_file)
 }
 \arguments{
-\item{path}{the path to the given file}
-
-\item{dest_csv}{desired destination folder}
+\item{gt3x_file}{the path to the given file}
 }
 \description{
 Converts a given .gt3x file to .csv format

@@ -1,4 +1,5 @@
 
+
 #' @title substrRight
 #' 
 #' @description Extracting n characters from the end of the string "jumping" last j characters
@@ -37,10 +38,11 @@ divide_1e7 <- function(y) {
 #' @title Read Info 
 #' 
 #' @description Reads the metadata of the gt3x file 
-#' 
-#' @deteails Reads the metadata registered in the .txt file that is contained inside .gt3x file provided by the actilife software
+#' @importFrom magrittr "%>%"
+#' @importFrom tidyr "separate"
+#' @importFrom tidyr "spread"
+#' @details Reads the metadata registered in the .txt file that is contained inside .gt3x file provided by the actilife software
 #' @param file_txt The path to the desired .txt file
-#' @import tidyverse
 
 read_info <- function(file_txt = file_txt) {
   
@@ -67,8 +69,9 @@ read_info <- function(file_txt = file_txt) {
 #' @param infofile default = info_filedf data frame containing the metadata generated through the read_info function
 #' @param dest_csv  default = ddestination folder. the folder to which you want to generate the header file
 #' @param files_list_i the name of the file that is going to be saved
-#' @import hms
-#' @import lubridate
+#' @importFrom hms "as_hms"
+
+
 
 save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_id)
 {
@@ -98,8 +101,7 @@ save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_id)
 #' @details Reads the metadata from the txt file located inside the .gt3x file provided by actigraph using the read_info function and saves it as a csv document using the save_header function.
 #' @param origin the path to the .gt3xfile to be converted
 #' @param dest default = same directory of the data.  the destination were the .csv file is going to be placed (to be implemented)
-#' @import read.gt3x
-#' @import tidyverse
+
 
 header_csv <- function( origin ) {
   
@@ -129,7 +131,7 @@ header_csv <- function( origin ) {
   
   # Unzipping the file 
   
-  unzip_single_gt3x( origin, location = paste0( dest, "/unzip"), verbose = FALSE)
+  read.gt3x::unzip_single_gt3x( origin, location = paste0( dest, "/unzip"), verbose = FALSE)
   
   # Creating the path to the desired .txt file
   
@@ -162,9 +164,6 @@ header_csv <- function( origin ) {
 #' 
 #' @details Reads the binary data inside the .gt3x file and saves it in .csv format
 #' @param acc.file the path to te .gt3x file 
-#' @import read.gt3x
-#' @import tidyverse
-#' @import tictoc
 
 save_accel <- function( acc.file ) {
   
@@ -175,7 +174,7 @@ save_accel <- function( acc.file ) {
   message ( "Reading acceleration", file_id)
   # Reading acceleration
   
-  accel <- read.gt3x( acc.file,
+  accel <- read.gt3x::read.gt3x( acc.file,
                       imputeZeroes = TRUE)
   
   accel_df <- as.data.frame( accel[ ,-4])
@@ -200,15 +199,15 @@ save_accel <- function( acc.file ) {
   
   message( "Writing acceleration", file_id)
   
-  tic( "Acceleration written ")
-  fwrite( x = accel_df,
+  tictoc::tic( "Acceleration written ")
+  data.table::fwrite( x = accel_df,
           file = paste0( csv_folder, "/", file_id, "RAW.csv"), 
           append = TRUE,
           sep = ",",
           col.names = TRUE,
           row.names = FALSE )
   
-  toc()
+  tictoc::toc()
   
 }
 
@@ -221,15 +220,8 @@ save_accel <- function( acc.file ) {
 #' @description Converts a given .gt3x file to .csv format
 #' 
 #' @details Reads both the .txt file and the .bin file located inside the .gt3x file given by actilife software and converts it to a csv file in the save format of the .csv file extracted from the sofrtware.
-#' @param path the path to the given file 
-#' @param dest_csv desired destination folder
-#' 
+#' @param gt3x_file the path to the given file 
 #' @export
-#' @import read.gt3x
-#' @import tidyverse
-#' @import data.table
-#' @import lubridate
-#' @import hms
 #' @seealso gt3x_folder_2_csv converts a folder 
 #' @seealso gt3x_2_csv_par converts a a folder using paralell processing
 
@@ -241,7 +233,7 @@ gt3x_2_csv <- function( gt3x_file )
   
   file_id <- substrRight( gt3x_file, 7, 5)
   
-  tic( paste( "File number", i ,"named", file_id, " processed" ) )
+  tictoc::tic( paste( "File named", file_id, " processed" ) )
   
   header_csv( gt3x_file )
   
@@ -261,6 +253,6 @@ gt3x_2_csv <- function( gt3x_file )
   
   unlink( unzip_folder_addres, recursive = TRUE )
   
-  toc()
+  tictoc::toc()
 }  
 

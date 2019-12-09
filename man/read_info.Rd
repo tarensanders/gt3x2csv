@@ -12,3 +12,6 @@ read_info(file_txt = file_txt)
 \description{
 Reads the metadata of the gt3x file
 }
+\details{
+Reads the metadata registered in the .txt file that is contained inside .gt3x file provided by the actilife software
+}
