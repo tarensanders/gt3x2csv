@@ -8,8 +8,6 @@ header_csv(origin)
 }
 \arguments{
 \item{origin}{the path to the .gt3xfile to be converted}
-
-\item{dest}{default = same directory of the data.  the destination were the .csv file is going to be placed (to be implemented)}
 }
 \description{
 Reads the metadata from gt3x files and savaes as csv
