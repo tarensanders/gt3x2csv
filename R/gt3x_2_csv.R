@@ -29,7 +29,6 @@ divide_1e7 <- function(y) {
 #' 
 #' @details Reads the metadata registered in the .txt file that is contained inside .gt3x file provided by the actilife software
 #' @param file_txt The path to the desired .txt file
-#' @import magrittr
 #' @import tidyr
 #' @importFrom  dplyr rename_all vars funs 
 #' @export
@@ -58,8 +57,7 @@ read_info <- function(file_txt = file_txt) {
 #' @param df_file default = info_filedf data frame containing the metadata generated through the read_info function
 #' @param dest_csv  default = ddestination folder. the folder to which you want to generate the header file
 #' @param file_name the name of the file that is going to be saved
-#' @import hms
-#' @import lubridate
+#' @importFrom hms as_hms
 #' @export
 save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_name = file_id)
 {
@@ -89,8 +87,6 @@ save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_name 
 #' @details Reads the metadata from the txt file located inside the .gt3x file provided by actigraph using the read_info function and saves it as a csv document using the save_header function.
 #' @param origin the path to the .gt3xfile to be converted
 #' @import read.gt3x
-#' @import tidyverse
-#' @import magrittr
 #' @import pathological
 #' @export
 header_csv <- function( origin ) {
@@ -156,7 +152,6 @@ header_csv <- function( origin ) {
 #' @param acc.file the path to te .gt3x file 
 #' @import read.gt3x
 #' @import tidyverse
-#' @import magrittr
 #' @import tictoc
 #' @import pathological
 #' @export
@@ -220,14 +215,11 @@ save_accel <- function( acc.file ) {
 #' @export
 #' @import read.gt3x
 #' @import tidyverse
-#' @import magrittr
 #' @import data.table
-#' @import lubridate
-#' @import hms
+#' @importFrom hms as_hms
 #' @import pathological
 #' @seealso gt3x_folder_2_csv converts a folder 
 #' @seealso gt3x_2_csv_par converts a a folder using paralell processing
-
 
 gt3x_2_csv <- function( gt3x_file )
   
