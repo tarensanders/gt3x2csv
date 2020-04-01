@@ -27,9 +27,12 @@ divide_1e7 <- function(y) {
 #' 
 #' @description Reads the metadata of the gt3x file 
 #' 
-#' @deteails Reads the metadata registered in the .txt file that is contained inside .gt3x file provided by the actilife software
+#' @details Reads the metadata registered in the .txt file that is contained inside .gt3x file provided by the actilife software
 #' @param file_txt The path to the desired .txt file
 #' @import tidyverse
+#' @import magrittr
+#' @import tidyr
+#' @import dplyr
 #' @export
 read_info <- function(file_txt = file_txt) {
   
@@ -89,6 +92,8 @@ save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_id)
 #' @param dest default = same directory of the data.  the destination were the .csv file is going to be placed (to be implemented)
 #' @import read.gt3x
 #' @import tidyverse
+#' @import magrittr
+#' @import pathological
 #' @export
 header_csv <- function( origin ) {
   
@@ -96,7 +101,7 @@ header_csv <- function( origin ) {
   
   #file name 
   
-  file_id <- decompose_path(test_path)$filename
+  file_id <- decompose_path(origin)$filename
   
   print( file_id)
   
@@ -153,7 +158,9 @@ header_csv <- function( origin ) {
 #' @param acc.file the path to te .gt3x file 
 #' @import read.gt3x
 #' @import tidyverse
+#' @import magrittr
 #' @import tictoc
+#' @import pathological
 #' @export
 save_accel <- function( acc.file ) {
   
@@ -216,9 +223,11 @@ save_accel <- function( acc.file ) {
 #' @export
 #' @import read.gt3x
 #' @import tidyverse
+#' @import magrittr
 #' @import data.table
 #' @import lubridate
 #' @import hms
+#' @import pathological
 #' @seealso gt3x_folder_2_csv converts a folder 
 #' @seealso gt3x_2_csv_par converts a a folder using paralell processing
 
