@@ -10,14 +10,12 @@ Imports: data.table,
          dplyr,
          foreach,
          hms,
-         pathological,
-         read.gt3x,
          tictoc,
          tidyr,
          tidyverse,
          doSNOW,
          read.gt3x
-Remotes: git::https://github.com/danilodpsantos/read.gt3x
+Remotes: git::git@github.com:THLfi/read.gt3x
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.0.2
