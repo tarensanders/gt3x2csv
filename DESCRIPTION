@@ -14,7 +14,8 @@ Imports: data.table,
          tidyr,
          tidyverse,
          doSNOW,
-         read.gt3x
+         read.gt3x,
+         stringr
 Remotes: git::https://github.com/danilodpsantos/read.gt3x.git
 Encoding: UTF-8
 LazyData: true
