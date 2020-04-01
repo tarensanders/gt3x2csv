@@ -41,10 +41,10 @@ read_info <- function(file_txt = file_txt) {
     spread(key, value)
   
   info_file %>%
-    rename_all(funs(make.names((names(info_file))))) %>%
-    mutate_at(vars( Download.Date, Last.Sample.Time, Start.Date, Stop.Date), as.numeric) %>%
-    mutate_at(vars( Download.Date, Last.Sample.Time, Start.Date, Stop.Date), divide_1e7) %>%
-    mutate_at(vars( Download.Date, Last.Sample.Time, Start.Date, Stop.Date), transform_dates)
+    dplyr::rename_all(dplyr::funs(make.names((names(info_file))))) %>%
+    dplyr::mutate_at(dplyr::vars( Download.Date, Last.Sample.Time, Start.Date, Stop.Date), as.numeric) %>%
+    dplyr::mutate_at(dplyr::vars( Download.Date, Last.Sample.Time, Start.Date, Stop.Date), divide_1e7) %>%
+    dplyr::mutate_at(dplyr::vars( Download.Date, Last.Sample.Time, Start.Date, Stop.Date), transform_dates)
   
 }
 
