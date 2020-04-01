@@ -1,22 +1,11 @@
 
-#' @title substrRight
-#' 
-#' @description Extracting n characters from the end of the string "jumping" last j characters
-#' @param x the string to be manipulated
-#' @param n the number of characters to extract from the string
-#' @param j the number of characters to ignore in the end of the string
-
-substrRight <- function( x, n = nchar( x ) - j, j = 0){
-   substr( x, nchar( x ) - ( n + j ) + 1, nchar( x ) - j)
-}
-
 #' @title transform_dates
 #' 
 #' @description Changing the formatting of the date-time information
 #' 
 #' @details Util to change the format of the date-times to the format used in the .gt3x file
 #' @param x the object containing the date to be changed.
-
+#' @export
 transform_dates <- function(x) {
   as.POSIXct(x, origin = "0001-01-01", tz = "UTC")
 }
@@ -26,7 +15,7 @@ transform_dates <- function(x) {
 #' 
 #' @description util function to the right format of dates
 #' @param y value to be divided by 1e7
-
+#' @export
 divide_1e7 <- function(y) {
   y / 1e7
 }
@@ -41,7 +30,7 @@ divide_1e7 <- function(y) {
 #' @deteails Reads the metadata registered in the .txt file that is contained inside .gt3x file provided by the actilife software
 #' @param file_txt The path to the desired .txt file
 #' @import tidyverse
-
+#' @export
 read_info <- function(file_txt = file_txt) {
   
   info_file <- data.frame(key = readLines(file_txt)) %>%
@@ -69,7 +58,7 @@ read_info <- function(file_txt = file_txt) {
 #' @param files_list_i the name of the file that is going to be saved
 #' @import hms
 #' @import lubridate
-
+#' @export
 save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_id)
 {
   #formatting the metadata to the actilife header form
@@ -100,14 +89,14 @@ save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_id)
 #' @param dest default = same directory of the data.  the destination were the .csv file is going to be placed (to be implemented)
 #' @import read.gt3x
 #' @import tidyverse
-
+#' @export
 header_csv <- function( origin ) {
   
-  dest <- substrRight( origin, j = 13)
+  dest <- decompose_path(origin)$dirname
   
   #file name 
   
-  file_id <- substrRight( origin, 7, 5)
+  file_id <- decompose_path(test_path)$filename
   
   print( file_id)
   
@@ -165,12 +154,12 @@ header_csv <- function( origin ) {
 #' @import read.gt3x
 #' @import tidyverse
 #' @import tictoc
-
+#' @export
 save_accel <- function( acc.file ) {
   
   #file name 
   
-  file_id <- substrRight( acc.file, 7, 5)
+  file_id <- decompose_path( acc.file)$filename
   
   message ( "Reading acceleration", file_id)
   # Reading acceleration
@@ -190,7 +179,7 @@ save_accel <- function( acc.file ) {
   
   # Extracting the folder path
   
-  dest <- substrRight( acc.file, j = 13 )
+  dest <- decompose_path( acc.file )$dirname
   
   # Results directory
   
@@ -239,17 +228,17 @@ gt3x_2_csv <- function( gt3x_file )
 {
   print( "Started processing file" )
   
-  file_id <- substrRight( gt3x_file, 7, 5)
+  file_id <- decompose_path( gt3x_file)$filename
   
-  tic( paste( "File number", i ,"named", file_id, " processed" ) )
+  #tic( paste( "File number", i ,"named", file_id, " processed" ) )
   
   header_csv( gt3x_file )
   
   save_accel( gt3x_file )
   
-  dest <- substrRight( gt3x_file, j = 13 )
+  dest <- decompose_path( gt3x_file)$dirname
   
-  file_id <- substrRight( gt3x_file, 7, 5 )
+  file_id <- decompose_path( gt3x_file)$filename
   
   unzipath <- paste0( dest, "/unzip")
   
@@ -261,6 +250,6 @@ gt3x_2_csv <- function( gt3x_file )
   
   unlink( unzip_folder_addres, recursive = TRUE )
   
-  toc()
+  #toc()
 }  
 
