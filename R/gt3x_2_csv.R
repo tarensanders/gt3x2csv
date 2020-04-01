@@ -1,22 +1,10 @@
-
-
-#' @title substrRight
-#' 
-#' @description Extracting n characters from the end of the string "jumping" last j characters
-#' @param x the string to be manipulated
-#' @param n the number of characters to extract from the string
-#' @param j the number of characters to ignore in the end of the string
-
-substrRight <- function( x, n = nchar( x ) - j, j = 0){
-   substr( x, nchar( x ) - ( n + j ) + 1, nchar( x ) - j)
-}
-
 #' @title transform_dates
 #' 
 #' @description Changing the formatting of the date-time information
 #' 
 #' @details Util to change the format of the date-times to the format used in the .gt3x file
 #' @param x the object containing the date to be changed.
+#' @export
 
 transform_dates <- function(x) {
   as.POSIXct(x, origin = "0001-01-01", tz = "UTC")
@@ -27,7 +15,7 @@ transform_dates <- function(x) {
 #' 
 #' @description util function to the right format of dates
 #' @param y value to be divided by 1e7
-
+#' @export
 divide_1e7 <- function(y) {
   y / 1e7
 }
@@ -38,11 +26,13 @@ divide_1e7 <- function(y) {
 #' @title Read Info 
 #' 
 #' @description Reads the metadata of the gt3x file 
-#' @importFrom magrittr "%>%"
-#' @importFrom tidyr "separate"
-#' @importFrom tidyr "spread"
 #' @details Reads the metadata registered in the .txt file that is contained inside .gt3x file provided by the actilife software
 #' @param file_txt The path to the desired .txt file
+#' @import tidyverse
+#' @import magrittr
+#' @import tidyr
+#' @import dplyr
+#' @export
 
 read_info <- function(file_txt = file_txt) {
   
@@ -51,10 +41,10 @@ read_info <- function(file_txt = file_txt) {
     spread(key, value)
   
   info_file %>%
-    rename_all(funs(make.names((names(info_file))))) %>%
-    mutate_at(vars( Download.Date, Last.Sample.Time, Start.Date, Stop.Date), as.numeric) %>%
-    mutate_at(vars( Download.Date, Last.Sample.Time, Start.Date, Stop.Date), divide_1e7) %>%
-    mutate_at(vars( Download.Date, Last.Sample.Time, Start.Date, Stop.Date), transform_dates)
+    dplyr::rename_all(dplyr::funs(make.names((names(info_file))))) %>%
+    dplyr::mutate_at(dplyr::vars( Download.Date, Last.Sample.Time, Start.Date, Stop.Date), as.numeric) %>%
+    dplyr::mutate_at(dplyr::vars( Download.Date, Last.Sample.Time, Start.Date, Stop.Date), divide_1e7) %>%
+    dplyr::mutate_at(dplyr::vars( Download.Date, Last.Sample.Time, Start.Date, Stop.Date), transform_dates)
   
 }
 
@@ -69,9 +59,9 @@ read_info <- function(file_txt = file_txt) {
 #' @param infofile default = info_filedf data frame containing the metadata generated through the read_info function
 #' @param dest_csv  default = ddestination folder. the folder to which you want to generate the header file
 #' @param files_list_i the name of the file that is going to be saved
-#' @importFrom hms "as_hms"
-
-
+#' @import hms
+#' @import lubridate
+#' @export
 
 save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_id)
 {
@@ -101,15 +91,19 @@ save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_id)
 #' @details Reads the metadata from the txt file located inside the .gt3x file provided by actigraph using the read_info function and saves it as a csv document using the save_header function.
 #' @param origin the path to the .gt3xfile to be converted
 #' @param dest default = same directory of the data.  the destination were the .csv file is going to be placed (to be implemented)
-
+#' @import read.gt3x
+#' @import tidyverse
+#' @import magrittr
+#' @import pathological
+#' @export
 
 header_csv <- function( origin ) {
   
-  dest <- substrRight( origin, j = 13)
+  dest <- decompose_path(origin)$dirname
   
   #file name 
   
-  file_id <- substrRight( origin, 7, 5)
+  file_id <- decompose_path(origin)$filename
   
   print( file_id)
   
@@ -164,12 +158,18 @@ header_csv <- function( origin ) {
 #' 
 #' @details Reads the binary data inside the .gt3x file and saves it in .csv format
 #' @param acc.file the path to te .gt3x file 
+#' @import read.gt3x
+#' @import tidyverse
+#' @import magrittr
+#' @import tictoc
+#' @import pathological
+#' @export
 
 save_accel <- function( acc.file ) {
   
   #file name 
   
-  file_id <- substrRight( acc.file, 7, 5)
+  file_id <- decompose_path( acc.file)$filename
   
   message ( "Reading acceleration", file_id)
   # Reading acceleration
@@ -189,7 +189,7 @@ save_accel <- function( acc.file ) {
   
   # Extracting the folder path
   
-  dest <- substrRight( acc.file, j = 13 )
+  dest <- decompose_path( acc.file )$dirname
   
   # Results directory
   
@@ -222,7 +222,15 @@ save_accel <- function( acc.file ) {
 #' @details Reads both the .txt file and the .bin file located inside the .gt3x file given by actilife software and converts it to a csv file in the save format of the .csv file extracted from the sofrtware.
 #' @param gt3x_file the path to the given file 
 #' @export
-#' @seealso gt3x_folder_2_csv converts a folder 
+#' @import read.gt3x
+#' @import tidyverse
+#' @import magrittr
+#' @import data.table
+#' @import lubridate
+#' @import hms
+#' @import pathological
+
+#' @seealso gt3x_folder_2_csv converts a folder
 #' @seealso gt3x_2_csv_par converts a a folder using paralell processing
 
 
@@ -231,7 +239,7 @@ gt3x_2_csv <- function( gt3x_file )
 {
   print( "Started processing file" )
   
-  file_id <- substrRight( gt3x_file, 7, 5)
+  file_id <- decompose_path( gt3x_file)$filename
   
   tictoc::tic( paste( "File named", file_id, " processed" ) )
   
@@ -239,9 +247,9 @@ gt3x_2_csv <- function( gt3x_file )
   
   save_accel( gt3x_file )
   
-  dest <- substrRight( gt3x_file, j = 13 )
+  dest <- decompose_path( gt3x_file)$dirname
   
-  file_id <- substrRight( gt3x_file, 7, 5 )
+  file_id <- decompose_path( gt3x_file)$filename
   
   unzipath <- paste0( dest, "/unzip")
   
