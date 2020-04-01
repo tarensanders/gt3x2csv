@@ -4,14 +4,14 @@
 \alias{save_header}
 \title{save_header}
 \usage{
-save_header(df_file = info_filedf, dest_csv = csv_folder, file_id)
+save_header(df_file = info_filedf, dest_csv = csv_folder, file_name = file_id)
 }
 \arguments{
+\item{df_file}{default = info_filedf data frame containing the metadata generated through the read_info function}
+
 \item{dest_csv}{default = ddestination folder. the folder to which you want to generate the header file}
 
-\item{infofile}{default = info_filedf data frame containing the metadata generated through the read_info function}
-
-\item{files_list_i}{the name of the file that is going to be saved}
+\item{file_name}{the name of the file that is going to be saved}
 }
 \description{
 Saves .gt3x metadata as csv header
