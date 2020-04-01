@@ -87,15 +87,14 @@ save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_name 
 #' @details Reads the metadata from the txt file located inside the .gt3x file provided by actigraph using the read_info function and saves it as a csv document using the save_header function.
 #' @param origin the path to the .gt3xfile to be converted
 #' @import read.gt3x
-#' @import pathological
 #' @export
 header_csv <- function( origin ) {
   
-  dest <- decompose_path(origin)$dirname
+  dest <- dirname(origin)
   
   #file name 
   
-  file_id <- decompose_path(origin)$filename
+  file_id <- basename(origin)
   
   print( file_id)
   
@@ -153,13 +152,12 @@ header_csv <- function( origin ) {
 #' @import read.gt3x
 #' @import tidyverse
 #' @import tictoc
-#' @import pathological
 #' @export
 save_accel <- function( acc.file ) {
   
   #file name 
   
-  file_id <- decompose_path( acc.file)$filename
+  file_id <- basename( acc.file)
   
   message ( "Reading acceleration", file_id)
   # Reading acceleration
@@ -179,7 +177,7 @@ save_accel <- function( acc.file ) {
   
   # Extracting the folder path
   
-  dest <- decompose_path( acc.file )$dirname
+  dest <- dirname( acc.file )
   
   # Results directory
   
@@ -217,7 +215,6 @@ save_accel <- function( acc.file ) {
 #' @import tidyverse
 #' @import data.table
 #' @importFrom hms as_hms
-#' @import pathological
 #' @seealso gt3x_folder_2_csv converts a folder 
 #' @seealso gt3x_2_csv_par converts a a folder using paralell processing
 
@@ -226,7 +223,7 @@ gt3x_2_csv <- function( gt3x_file )
 {
   print( "Started processing file" )
   
-  file_id <- decompose_path( gt3x_file)$filename
+  file_id <- basename( gt3x_file)
   
   #tic( paste( "File number", i ,"named", file_id, " processed" ) )
   
@@ -234,9 +231,9 @@ gt3x_2_csv <- function( gt3x_file )
   
   save_accel( gt3x_file )
   
-  dest <- decompose_path( gt3x_file)$dirname
+  dest <- dirname( gt3x_file)
   
-  file_id <- decompose_path( gt3x_file)$filename
+  file_id <- basename( gt3x_file)
   
   unzipath <- paste0( dest, "/unzip")
   
