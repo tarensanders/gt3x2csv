@@ -49,8 +49,8 @@ gt3x_2_csv_par <- function(folder, n.cores = detectCores()-1) {
   print(paste("Started processing", length(file_names), "files"))
   
   foreach (i = 1:length(file_names),
-           .export = c("gt3x_2_csv","substrRight", "divide_1e7","header_csv", "read_info", "save_accel", "save_header", "transform_dates"),
-           .packages = c("tictoc", "read.gt3x", "tidyverse", "data.table", "tcltk"),
+           .export = c("gt3x_2_csv", "divide_1e7","header_csv", "read_info", "save_accel", "save_header", "transform_dates"),
+           .packages = c("tictoc", "read.gt3x", "tidyverse", "data.table", "tcltk", "pathological"),
            .inorder = TRUE, .errorhandling = "pass") %dopar% {
              
              gt3x_2_csv(file_names[i])
