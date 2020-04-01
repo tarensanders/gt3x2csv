@@ -25,7 +25,7 @@ gt3x_2_csv_par <- function(folder, n.cores = detectCores()-1) {
   
   cluster <- parallel::makePSOCKcluster(n.cores)
   
-  registerDoSNOW(cluster)
+  doSNOW::registerDoSNOW(cluster)
   
   
   file_names<- list.files(folder,
@@ -49,10 +49,9 @@ gt3x_2_csv_par <- function(folder, n.cores = detectCores()-1) {
   print(paste("Started processing", length(file_names), "files"))
   
   foreach (i = 1:length(file_names),
-           .export = c("gt3x_2_csv","substrRight", "divide_1e7","format_header", "header_csv", "read_info", "save_accel", "save_header", "transform_dates"),
+           .export = c("gt3x_2_csv","substrRight", "divide_1e7","header_csv", "read_info", "save_accel", "save_header", "transform_dates"),
            .packages = c("tictoc", "read.gt3x", "tidyverse", "data.table", "tcltk"),
-           .inorder = TRUE,
-           .options.snow = opts, .errorhandling = "pass") %dopar% {
+           .inorder = TRUE, .errorhandling = "pass") %dopar% {
              
              gt3x_2_csv(file_names[i])
              gc(verbose = FALSE)
