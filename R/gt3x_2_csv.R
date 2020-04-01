@@ -29,10 +29,9 @@ divide_1e7 <- function(y) {
 #' 
 #' @details Reads the metadata registered in the .txt file that is contained inside .gt3x file provided by the actilife software
 #' @param file_txt The path to the desired .txt file
-#' @import tidyverse
 #' @import magrittr
 #' @import tidyr
-#' @import dplyr
+#' @importFrom  dplyr rename_all vars funs 
 #' @export
 read_info <- function(file_txt = file_txt) {
   
@@ -58,11 +57,11 @@ read_info <- function(file_txt = file_txt) {
 #' @details Saves the header extracted from the .gt3x file with the read_info function in the .csv extension (look at read_info function)
 #' @param df_file default = info_filedf data frame containing the metadata generated through the read_info function
 #' @param dest_csv  default = ddestination folder. the folder to which you want to generate the header file
-#' @param files_list_i the name of the file that is going to be saved
+#' @param file_name the name of the file that is going to be saved
 #' @import hms
 #' @import lubridate
 #' @export
-save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_id)
+save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_name = file_id)
 {
   #formatting the metadata to the actilife header form
   
@@ -80,7 +79,7 @@ save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_id)
   # Writing the .csv document with the header
   
   cat(header_txt,
-      file = paste0( dest_csv, "/", file_id, "RAW.csv"))
+      file = paste0( dest_csv, "/", file_name, "RAW.csv"))
 }
 
 #' @title header_csv
@@ -142,7 +141,7 @@ header_csv <- function( origin ) {
   
   info_filedf <- read_info( file_txt)
   
-  save_header( df_file = info_filedf, dest_csv = csv_folder, file_id = file_id)
+  save_header( df_file = info_filedf, dest_csv = csv_folder, file_name = file_id)
   
   message("Header saved as:  ", csv_folder, "/", file_id, "RAW.csv")
 }
@@ -216,8 +215,7 @@ save_accel <- function( acc.file ) {
 #' @description Converts a given .gt3x file to .csv format
 #' 
 #' @details Reads both the .txt file and the .bin file located inside the .gt3x file given by actilife software and converts it to a csv file in the save format of the .csv file extracted from the sofrtware.
-#' @param path the path to the given file 
-#' @param dest_csv desired destination folder
+#' @param gt3x_file the path to the given file
 #' 
 #' @export
 #' @import read.gt3x
