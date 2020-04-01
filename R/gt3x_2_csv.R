@@ -56,7 +56,7 @@ read_info <- function(file_txt = file_txt) {
 #' @description Saves .gt3x metadata as csv header
 #'
 #' @details Saves the header extracted from the .gt3x file with the read_info function in the .csv extension (look at read_info function)
-#' @param infofile default = info_filedf data frame containing the metadata generated through the read_info function
+#' @param df_file default = info_filedf data frame containing the metadata generated through the read_info function
 #' @param dest_csv  default = ddestination folder. the folder to which you want to generate the header file
 #' @param files_list_i the name of the file that is going to be saved
 #' @import hms
@@ -89,7 +89,6 @@ save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_id)
 #' 
 #' @details Reads the metadata from the txt file located inside the .gt3x file provided by actigraph using the read_info function and saves it as a csv document using the save_header function.
 #' @param origin the path to the .gt3xfile to be converted
-#' @param dest default = same directory of the data.  the destination were the .csv file is going to be placed (to be implemented)
 #' @import read.gt3x
 #' @import tidyverse
 #' @import magrittr
