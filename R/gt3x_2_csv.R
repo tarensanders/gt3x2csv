@@ -89,6 +89,7 @@ save_header <- function(df_file = info_filedf, dest_csv = csv_folder, file_name 
 #' @details Reads the metadata from the txt file located inside the .gt3x file provided by actigraph using the read_info function and saves it as a csv document using the save_header function.
 #' @param origin the path to the .gt3xfile to be converted
 #' @import read.gt3x
+#' @importFrom stringr str_sub
 #' @export
 
 header_csv <- function( origin ) {
@@ -97,9 +98,7 @@ header_csv <- function( origin ) {
   
   #file name 
   
-  file_id <- basename(origin)
-  
-  print( file_id)
+  file_id <- basename(origin) %>% str_sub(1, -6)
   
   # Results directory
   
@@ -155,13 +154,14 @@ header_csv <- function( origin ) {
 #' @import read.gt3x
 #' @import tidyverse
 #' @import tictoc
+#' @importFrom stringr str_sub
 #' @export
 
 save_accel <- function( acc.file ) {
   
   #file name 
   
-  file_id <- basename( acc.file)
+  file_id <- basename(acc.file) %>% str_sub(1, -6)
   
   message ( "Reading acceleration", file_id)
   # Reading acceleration
@@ -219,6 +219,7 @@ save_accel <- function( acc.file ) {
 #' @import tidyverse
 #' @import data.table
 #' @importFrom hms as_hms
+#' @importFrom stringr str_sub
 #' @seealso gt3x_folder_2_csv converts a folder 
 #' @seealso gt3x_2_csv_par converts a a folder using paralell processing
 
@@ -227,7 +228,7 @@ gt3x_2_csv <- function( gt3x_file )
 {
   print( "Started processing file" )
   
-  file_id <- basename( gt3x_file)
+  file_id <- basename( gt3x_file) %>% str_sub(1, -6)
   
   tictoc::tic( paste( "File named", file_id, " processed" ) )
   
@@ -237,7 +238,7 @@ gt3x_2_csv <- function( gt3x_file )
   
   dest <- dirname( gt3x_file)
   
-  file_id <- basename( gt3x_file)
+  file_id <- basename( gt3x_file) %>% str_sub(1, -6)
   
   unzipath <- paste0( dest, "/unzip")
   

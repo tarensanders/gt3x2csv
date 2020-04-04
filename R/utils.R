@@ -1,6 +1,8 @@
 #' @title Pipe operator
+#' 
 #' @keywords internal
 #' @importFrom dplyr %>%
+#' 
 NULL
 
 
