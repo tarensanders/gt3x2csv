@@ -1,4 +1,3 @@
-
 #' gt3x_2_csv_par
 #' 
 #' Processing multiple gt3x files at the same time
@@ -9,12 +8,9 @@
 #' @return a folder named csv with inside the folder where the .gt3x files are located
 #' @export
 #' @importFrom tcltk "tkProgressBar"
-#' @importFrom foreach "%dopar%"
+#' @importFrom foreach "%dopar%" foreach
 #' @seealso gt3x_2_csv
 #' @seealso gt3x_folder_2_csv
-
-
-
 gt3x_2_csv_par <- function(folder, n.cores = (parallel::detectCores())-1) {
 
   print("Preparing machine")
