@@ -171,7 +171,7 @@ save_accel <- function(acc.file, outdir = NULL, verbose = FALSE){
                 transmute(`Accelerometer X` = Y %>% as.character,
                           `Accelerometer Y` = X %>% as.character,
                           `Accelerometer Z` = Z %>% as.character)
-  
+
   # Writing acceleration data in csv:
   if(verbose){
     log_success("Read accelerometer data from '", file_id, ".gt3x:log.bin'. Took ", 
@@ -197,18 +197,19 @@ save_accel <- function(acc.file, outdir = NULL, verbose = FALSE){
 #' 
 #' @description Convert GT3X files to CSV format in Actilife's default export format.
 #' 
-#' @details Reads the "info.txt" and "log.bin" internal files from a ".gt3x" file exporter by Actilife's software and converts it to a CSV file in the same format of the CSV file extracted from the software.
-#' @param gt3x_file path to a GT3X file to convert
-#' @param outdir path for outputting the CSV formatted file (default: NULL). There will be another directory created inside this one, called "/csv".
+#' @details Reads the "info.txt" and "log.bin" internal files from ".gt3x" files exported by Actilife's software and converts it to a CSV file in the same format of the CSV file extracted directly from the software.
+#' @param gt3x_files complete path to a GT3X file to convert. Can also be a vector of complete filenames or a directory with ".gt3x" files in it.
+#' @param outdir path to a directory for outputting the CSV formatted file (default: NULL). There will be another directory created inside this one, called "/csv".
 #' @param verbose logical: wether to show detailed log messages or not (default: FALSE)
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom utils unzip
+#' @importFrom gdata humanReadable
 #' @importFrom stringr str_sub str_detect
 #' @importFrom logger log_layout layout_glue_colors log_threshold TRACE log_error log_trace log_info
 #' @seealso gt3x_folder_2_csv converts a folder 
 #' @seealso gt3x_2_csv_par converts a a folder using paralell processing
-gt3x_2_csv <- function(gt3x_file = NULL, outdir = NULL, verbose = FALSE){
+gt3x_2_csv <- function(gt3x_files = NULL, outdir = NULL, verbose = FALSE){
   # Configuring logger:
   log_layout(layout_glue_colors)
   log_threshold(TRACE)
@@ -217,30 +218,116 @@ gt3x_2_csv <- function(gt3x_file = NULL, outdir = NULL, verbose = FALSE){
   #   - Made it so that all errors found are printed, to ease debugging
   quit <- FALSE
   
-  #   - If there's no specified .gt3x file:
-  if(is.null(gt3x_file)){
+  #   - If there's no specified .gt3x file/folder:
+  if(is.null(gt3x_files)){
     quit <- TRUE
-    log_error("Please specify a GT3X file with 'gt3x_file' in the function call.")
-  #   - If the specified .gt3x file doesn't exist:
-  } else if(!file.exists(gt3x_file)){
-    #   - If even pasting the extension on it doesn't work, quit with an error:
-    if(!file.exists(paste0(gt3x_file, ".gt3x"))){
-      quit <- TRUE
-      log_error("File '", gt3x_file, "' not found.")
-    #   - Else, append the extension and keep going:
-    } else{
-      if(verbose){
-        log_trace("File '", gt3x_file, "' not found. Using '", paste0(gt3x_file, ".gt3x"), "' as the filename.")
+    log_error("Please specify the complete path to a GT3X file, a vector of complete paths to GT3X files or a folder containing GT3X files with the parameter 'gt3x_files' in the function call.")
+  #   - If there is a specified .gt3x file/folder:
+  } else{
+    #   - If any filepaths have a "/" at the end, strip it out:
+    gt3x_files <- gt3x_files %>%
+                    sapply(function(x){
+                      x %>%
+                        str_detect('/$') %>%
+                        ifelse(str_sub(x, 1, -2), x)
+                    })
+    
+    #   - If 'gt3x_files' is a 1L vector:
+    if(length(gt3x_files) == 1){
+      #   - If the specified .gt3x file/folder doesn't exist:
+      if(!file.exists(gt3x_files)){
+        #   - If even pasting the extension on it doesn't work, quit with an error:
+        if(!file.exists(paste0(gt3x_files, ".gt3x"))){
+          quit <- TRUE
+          log_error("Path '", gt3x_files, "' doesn't seem to be an existing file or directory.")
+        #   - Else, append the extension and keep going:
+        } else{
+          if(verbose){
+            log_trace("File '", gt3x_files, "' not found. Using '", paste0(gt3x_files, ".gt3x"), "' as a filename.")
+          }
+          gt3x_files <- paste0(gt3x_files, ".gt3x")
+        }
+      #   - If it exists and is a folder:
+      } else if(!str_detect(gt3x_files, "\\..*$")){
+        #   - If there are no GT3X files in it, quit:
+        if(gt3x_files %>% 
+             list.files(pattern = "\\.gt3x$",
+                        ignore.case = TRUE) %>%
+             length < 1){
+          quit <- TRUE
+          log_error("No GT3X files found at '", gt3x_files, "'.")
+        #   - If there are GT3X files in it, list them:
+        } else {
+          gt3x_files <- gt3x_files %>%
+                          list.files(pattern = "\\.gt3x$",
+                                     full.names = TRUE,
+                                     ignore.case = TRUE)
+        }
       }
-      gt3x_file <- paste0(gt3x_file, ".gt3x")
+      
+      # Checking for expected content in the files:
+      if(!quit){
+        ctErrorCounter <- 0
+        contents_error <- character()
+        
+        for(itChecks in 1:length(gt3x_files)){
+          if(!"info.txt" %in% unzip(gt3x_files[itChecks], list = TRUE)$Name |
+             !"log.bin"  %in% unzip(gt3x_files[itChecks], list = TRUE)$Name){
+            ctErrorCounter <- ctErrorCounter + 1
+            quit <- TRUE
+          }
+        }
+        
+        if(length(contents_error) > 1){
+          log_error("These files don't have the expected GT3X structure: '",
+                    paste(contents_error, collapse = "', '"),
+                    "'.")
+        } else if(length(contents_error > 0)){
+          log_error("File '", contents_error, "' doesn't have the expected GT3X structure.")
+        }
+      }
+    #   - If 'gt3x_files' is a vector of filepaths:
+    } else if(length(gt3x_files) > 1){
+      #   - Checking if each of them exists:
+      checks <- gt3x_files %>% file.exists
+      
+      # Creating auxiliary variables:
+      flErrorCounter <- 0
+      ctErrorCounter <- 0
+      files_error <- character()
+      contents_error <- character()
+      
+      for(itChecks in 1:length(checks)){
+        #   - If any one of the files doesnt't exist, quit the function:
+        if(!checks[itChecks]){
+          flErrorCounter <- flErrorCounter + 1
+          quit <- TRUE
+          files_error[flErrorCounter] <- gt3x_files[itChecks]
+        #   - If any file exists but doesn't have the expected content:
+        } else if(!"info.txt" %in% unzip(gt3x_files[itChecks], list = TRUE)$Name |
+                  !"log.bin"  %in% unzip(gt3x_files[itChecks], list = TRUE)$Name) {
+          ctErrorCounter <- ctErrorCounter + 1
+          quit <- TRUE
+          contents_error[ctErrorCounter] <- gt3x_files[itChecks]
+        }
+      }
+      
+      if(length(files_error) > 1){
+        log_error("Couldn't find these files: '", 
+                  paste(files_error, collapse = "', '"),
+                  "'.")
+      } else if(length(files_error) > 0){
+        log_error("File '", files_error, "' couldn't be found.")
+      }
+      
+      if(length(contents_error > 1)){
+        log_error("These files don't have the expected GT3X structure: '",
+                  paste(contents_error, collapse = "', '"),
+                  "'.")
+      } else{
+        log_error("File '", contents_error, "' doesn't have the expected GT3X structure.")
+      }
     }
-  } 
-  
-  #   - Checking for expected files inside the .gt3x:
-  if(!"info.txt" %in% unzip(gt3x_file, list = TRUE)$Name |
-     !"log.bin" %in% unzip(gt3x_file, list = TRUE)$Name){
-    quit <- TRUE
-    log_error("File '", gt3x_file, "' doesn't contain expected files within it.")
   }
   
   #   - If outdir is specified:
@@ -266,7 +353,11 @@ gt3x_2_csv <- function(gt3x_file = NULL, outdir = NULL, verbose = FALSE){
     }
   #   - If there's no outdir specified, warn the user of the outdir used:
   } else {
-    log_info("Outputting to '", dirname(gt3x_file), "'. Specify a directory in the 'outdir' parameter if you wish to change this.")
+    if(length(gt3x_files) == 1){
+      log_info("Outputting to '", dirname(gt3x_files), "'. Specify a directory in the 'outdir' parameter if you wish to change this.")
+    } else{
+      log_info("Outputting each processed file to it's parent '.gt3x' directory.")
+    }
   }
   
   # If there are no errors:
@@ -278,44 +369,66 @@ gt3x_2_csv <- function(gt3x_file = NULL, outdir = NULL, verbose = FALSE){
     
     startTime <- Sys.time()
 
-    # Trace message:
-    if(verbose){
-      log_trace(paste0("Started processing file '", gt3x_file, "'."))
+    # Iterating through all files:
+    for(file_n in 1:length(gt3x_files)){
+      # Initialize runtime counter:
+      fileStartTime <- Sys.time()
+      
+      # Get this iteration's filepath:
+      gt3x_file <- gt3x_files[file_n]
+      
+      # Trace message:
+      if(verbose){
+        log_trace(paste0("Started processing file '", gt3x_file, "'."))
+      }
+      
+      # Auxiliary variables;
+      #   - Output directory:
+      ifelse(is.null(outdir),
+             assign("outdir", dirname(gt3x_file)),
+             assign("outdir", outdir)) %>%
+        # Don't print ifelse() results to log:
+        invisible
+      
+      #   - Output file:
+      assign("outfile",
+             basename(gt3x_file) %>%
+               # Trimming file extension out:
+               str_sub(1, -6))
+      
+      # Trace message:
+      if(verbose){
+        log_trace(paste0("Using '", outdir, "' as the output directory and '", outfile, ".gt3x' as the output filename."))
+        log_trace(paste0("Attempting to extract contents from '.gt3x' file."))
+      }
+      
+      # Extracting activity header from the 'info.txt' file and exporting content from 
+      # the 'log.bin' file as CSV:
+      header_csv(gt3x_file, outdir, verbose = verbose)
+      save_accel(gt3x_file, outdir, verbose = verbose)
+  
+      # Trace message with elapsed time:
+      if(verbose){
+        log_trace(paste0("File '",
+                         outfile,
+                         ".gt3x' processed. Took ",
+                         Sys.time() %>%
+                           difftime(fileStartTime, units = "secs") %>%
+                           as.numeric %>%
+                           round(2), 
+                         " seconds. Approximate file size: ", 
+                         file.info(paste0(outdir, "/", outfile, ".gt3x"))$size %>%
+                           humanReadable(standard = "SI")))
+      }
     }
     
-    # Auxiliary variables;
-    #   - Output directory:
-    ifelse(is.null(outdir),
-           assign("outdir", dirname(gt3x_file)),
-           assign("outdir", outdir)) %>%
-      # Don't print ifelse() results to log:
-      invisible
-    
-    #   - Output file:
-    assign("outfile",
-           basename(gt3x_file) %>%
-             # Trimming file extension out:
-             str_sub(1, -6))
-    
-    # Trace message:
-    if(verbose){
-      log_trace(paste0("Using '", outdir, "' as the output directory and '", outfile, "' as the output filename."))
-      log_trace(paste0("Attempting to extract contents from '.gt3x' file."))
-    }
-    
-    # Extracting activity header from the 'info.txt' file and exporting content from 
-    # the 'log.bin' file as CSV:
-    header_csv(gt3x_file, outdir, verbose = verbose)
-    save_accel(gt3x_file, outdir, verbose = verbose)
-
-    # Trace message with elapsed time:
-    if(verbose){
-      log_trace(paste0("File '",
-                       outfile,
-                       ".gt3x' processed. Took ",
-                       (Sys.time() - startTime) %>%
+    # Trace message with total elapsed time:
+    if(verbose & length(gt3x_files > 1)){
+      log_trace(paste0("Total elapsed time: ", 
+                       Sys.time() %>%
+                         difftime(startTime, units = "secs") %>%
                          as.numeric %>%
-                         round(2), 
+                         round(2),
                        " seconds."))
     }
   }

@@ -19,7 +19,8 @@ Imports: utils,
          stringr,
          logger,
          magrittr,
-         vroom
+         vroom,
+         gdata
 Remotes: git::https://github.com/danilodpsantos/read.gt3x.git
 Encoding: UTF-8
 LazyData: true

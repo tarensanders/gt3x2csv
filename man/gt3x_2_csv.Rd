@@ -4,12 +4,12 @@
 \alias{gt3x_2_csv}
 \title{Export GT3X as CSV}
 \usage{
-gt3x_2_csv(gt3x_file = NULL, outdir = NULL, verbose = FALSE)
+gt3x_2_csv(gt3x_files = NULL, outdir = NULL, verbose = FALSE)
 }
 \arguments{
-\item{gt3x_file}{path to a GT3X file to convert}
+\item{gt3x_files}{complete path to a GT3X file to convert. Can also be a vector of complete filenames or a directory with ".gt3x" files in it.}
 
-\item{outdir}{path for outputting the CSV formatted file (default: NULL). There will be another directory created inside this one, called "/csv".}
+\item{outdir}{path to a directory for outputting the CSV formatted file (default: NULL). There will be another directory created inside this one, called "/csv".}
 
 \item{verbose}{logical: wether to show detailed log messages or not (default: FALSE)}
 }
@@ -17,7 +17,7 @@ gt3x_2_csv(gt3x_file = NULL, outdir = NULL, verbose = FALSE)
 Convert GT3X files to CSV format in Actilife's default export format.
 }
 \details{
-Reads the "info.txt" and "log.bin" internal files from a ".gt3x" file exporter by Actilife's software and converts it to a CSV file in the same format of the CSV file extracted from the software.
+Reads the "info.txt" and "log.bin" internal files from ".gt3x" files exported by Actilife's software and converts it to a CSV file in the same format of the CSV file extracted directly from the software.
 }
 \seealso{
 gt3x_folder_2_csv converts a folder
