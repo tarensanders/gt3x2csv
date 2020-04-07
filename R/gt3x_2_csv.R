@@ -200,16 +200,27 @@ save_accel <- function(acc.file, outdir = NULL, verbose = FALSE){
 #' @details Reads the "info.txt" and "log.bin" internal files from ".gt3x" files exported by Actilife's software and converts it to a CSV file in the same format of the CSV file extracted directly from the software.
 #' @param gt3x_files complete path to a GT3X file to convert. Can also be a vector of complete filenames or a directory with ".gt3x" files in it.
 #' @param outdir path to a directory for outputting the CSV formatted file (default: NULL). There will be another directory created inside this one, called "/csv".
-#' @param verbose logical: wether to show detailed log messages or not (default: FALSE)
+#' @param progress logical: wether or not to show TCLTK progress bar (default: FALSE)
+#' @param parallel logical: wether or not to use parallel processing (default: FALSE)
+#' @param cores integer: number of cores to use for parallelization. If parallel = FALSE, this argument will be ignored.
+#' @param logfile path to use for outputting logfile. If FALSE, even when verbose = TRUE only print basic info messages and directly to R log. Default (NULL) outputs to R's log when parallel = FALSE and to the same directory as the CSV output when parallel = TRUE.
+#' @param verbose logical: wether or not to show detailed log messages (default: FALSE)
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom utils unzip
 #' @importFrom gdata humanReadable
 #' @importFrom stringr str_sub str_detect
 #' @importFrom logger log_layout layout_glue_colors log_threshold TRACE log_error log_trace log_info
+#' @importFrom doSNOW registerDoSNOW
+#' @importFrom snow makeSOCKcluster
+#' @importFrom foreach foreach %dopar% registerDoSEQ
+#' @importFrom tcltk tkProgressBar setTkProgressBar
+#' @importFrom parallel stopCluster detectCores
 #' @seealso gt3x_folder_2_csv converts a folder 
 #' @seealso gt3x_2_csv_par converts a a folder using paralell processing
-gt3x_2_csv <- function(gt3x_files = NULL, outdir = NULL, verbose = FALSE){
+gt3x_2_csv <- function(gt3x_files = NULL, outdir = NULL, progress = FALSE,
+                       parallel = FALSE, cores = detectCores(), logfile = NULL,
+                       verbose = FALSE){
   # Configuring logger:
   log_layout(layout_glue_colors)
   log_threshold(TRACE)
@@ -369,18 +380,52 @@ gt3x_2_csv <- function(gt3x_files = NULL, outdir = NULL, verbose = FALSE){
     
     startTime <- Sys.time()
 
-    # Iterating through all files:
-    for(file_n in 1:length(gt3x_files)){
-      # Initialize runtime counter:
+    # Creating cluster with number of cores to use:
+    if(parallel){
+      cluster <- makeSOCKcluster(cores)
+      registerDoSNOW(cluster)
+      
+      if(verbose){
+        log_success("Cluster allocated for parallelization. Using ", detectCores(), " cores.")
+      }
+    } else {
+      registerDoSEQ()
+      
+      if(verbose){
+        log_trace("Processing files sequentially.")
+      }
+    }
+    
+    # If user asked for progress bar:
+    if(progress){
+      bar <- tkProgressBar(title = "Converting GT3X files to CSV. Progress:",
+                           min = 0,
+                           max = length(gt3x_files),
+                           width = 500) 
+      
+      updateProgress <- function(n){
+        setTkProgressBar(bar,
+                         n,
+                         label = paste0(round(n/length(gt3x_files)*100, 0), "% done"))
+      }
+      
+      opts <- list(progress = updateProgress)
+    } else{
+      opts <- list()
+    }
+    
+    # Looping through file list with %dopar%:
+    foreach(
+      it_file = 1:length(gt3x_files),
+      .export = c("save_accel", "read_info", "header_csv", "save_header"),
+      .inorder = FALSE,
+      .options.snow = opts
+    ) %dopar% {
+      # Initialize runtime counter for this particular file:
       fileStartTime <- Sys.time()
       
       # Get this iteration's filepath:
-      gt3x_file <- gt3x_files[file_n]
-      
-      # Trace message:
-      if(verbose){
-        log_trace(paste0("Started processing file '", gt3x_file, "'."))
-      }
+      gt3x_file <- gt3x_files[it_file]
       
       # Auxiliary variables;
       #   - Output directory:
@@ -396,8 +441,16 @@ gt3x_2_csv <- function(gt3x_files = NULL, outdir = NULL, verbose = FALSE){
                # Trimming file extension out:
                str_sub(1, -6))
       
+      # Logfile:
+      if(is.null(logfile) & parallel){
+        sink(paste0(outdir, "/", outfile, ".txt"))
+      } else if(logfile != FALSE){
+        sink(logfile)
+      }
+      
       # Trace message:
       if(verbose){
+        log_trace(paste0("Started processing file '", gt3x_file, "'."))
         log_trace(paste0("Using '", outdir, "' as the output directory and '", outfile, ".gt3x' as the output filename."))
         log_trace(paste0("Attempting to extract contents from '.gt3x' file."))
       }
@@ -408,18 +461,29 @@ gt3x_2_csv <- function(gt3x_files = NULL, outdir = NULL, verbose = FALSE){
       save_accel(gt3x_file, outdir, verbose = verbose)
   
       # Trace message with elapsed time:
-      if(verbose){
-        log_trace(paste0("File '",
-                         outfile,
-                         ".gt3x' processed. Took ",
-                         Sys.time() %>%
-                           difftime(fileStartTime, units = "secs") %>%
-                           as.numeric %>%
-                           round(2), 
-                         " seconds. Approximate file size: ", 
-                         file.info(paste0(outdir, "/", outfile, ".gt3x"))$size %>%
-                           humanReadable(standard = "SI")))
-      }
+      log_trace(paste0("File '",
+                       outfile,
+                       ".gt3x' processed. Took ",
+                       Sys.time() %>%
+                         difftime(fileStartTime, units = "secs") %>%
+                         as.numeric %>%
+                         round(2), 
+                       " seconds. Approximate file size: ", 
+                       file.info(paste0(outdir, "/csv/", outfile, "RAW.csv"))$size %>%
+                         humanReadable(standard = "SI")))
+      
+      # Log back to R:
+      sink()
+    }
+    
+    # Stopping cluster:
+    if(parallel){
+      stopCluster(cluster)
+    }
+    
+    # Closing progress bar:
+    if(progress){
+      close(bar)
     }
     
     # Trace message with total elapsed time:
