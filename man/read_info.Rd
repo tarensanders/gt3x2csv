@@ -2,16 +2,18 @@
 % Please edit documentation in R/gt3x_2_csv.R
 \name{read_info}
 \alias{read_info}
-\title{Read Info}
+\title{Read metadata from a GT3X file}
 \usage{
-read_info(file_txt = file_txt)
+read_info(origin, verbose = FALSE)
 }
 \arguments{
-\item{file_txt}{The path to the desired .txt file}
+\item{origin}{path to a GT3X file from which to read the metadata}
+
+\item{verbose}{logical: wether to show detailed log messages or not (default: FALSE)}
 }
 \description{
-Reads the metadata of the gt3x file
+Read the metadata from a GT3X file as a data.frame.
 }
 \details{
-Reads the metadata registered in the .txt file that is contained inside .gt3x file provided by the actilife software
+Given a complete path to a file with extension ".gt3x" (exported from Actilife's software), import it's internal "info.txt" file, extract it's metadata and format it into an R data.frame.
 }

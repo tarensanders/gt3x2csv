@@ -2,16 +2,20 @@
 % Please edit documentation in R/gt3x_2_csv.R
 \name{header_csv}
 \alias{header_csv}
-\title{header_csv}
+\title{GT3X header to Actilife's format}
 \usage{
-header_csv(origin)
+header_csv(origin, outdir, verbose = FALSE)
 }
 \arguments{
-\item{origin}{the path to the .gt3xfile to be converted}
+\item{origin}{path to a GT3X file to convert}
+
+\item{outdir}{path for outputting the CSV formatted file}
+
+\item{verbose}{logical: wether to show detailed log messages or not (default: FALSE)}
 }
 \description{
-Reads the metadata from gt3x files and savaes as csv
+Reads metadata from ``.gt3x`` files, formats it to Actilife's standard format (for compatibility with GGIR) and exports it to a CSV file.
 }
 \details{
-Reads the metadata from the txt file located inside the .gt3x file provided by actigraph using the read_info function and saves it as a csv document using the save_header function.
+Reads the metadata from a GT3X file's internal "info.txt" file using the read_info function, then exports it as the header to a CSV file using the save_header function.
 }

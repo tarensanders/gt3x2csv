@@ -2,18 +2,38 @@
 % Please edit documentation in R/gt3x_2_csv.R
 \name{gt3x_2_csv}
 \alias{gt3x_2_csv}
-\title{gt3x_2_csv}
+\title{Export GT3X as CSV}
 \usage{
-gt3x_2_csv(gt3x_file)
+gt3x_2_csv(
+  gt3x_files = NULL,
+  outdir = NULL,
+  progress = FALSE,
+  parallel = FALSE,
+  cores = detectCores(),
+  logfile = NULL,
+  verbose = FALSE
+)
 }
 \arguments{
-\item{gt3x_file}{the path to the given file}
+\item{gt3x_files}{complete path to a GT3X file to convert. Can also be a vector of complete filenames or a directory with ".gt3x" files in it.}
+
+\item{outdir}{path to a directory for outputting the CSV formatted file (default: NULL). There will be another directory created inside this one, called "/csv".}
+
+\item{progress}{logical: wether or not to show TCLTK progress bar (default: FALSE)}
+
+\item{parallel}{logical: wether or not to use parallel processing (default: FALSE)}
+
+\item{cores}{integer: number of cores to use for parallelization. If parallel = FALSE, this argument will be ignored.}
+
+\item{logfile}{path to use for outputting logfile. If FALSE, even when verbose = TRUE only print basic info messages and directly to R log. Default (NULL) outputs to R's log when parallel = FALSE and to the same directory as the CSV output when parallel = TRUE.}
+
+\item{verbose}{logical: wether or not to show detailed log messages (default: FALSE)}
 }
 \description{
-Converts a given .gt3x file to .csv format
+Convert GT3X files to CSV format in Actilife's default export format.
 }
 \details{
-Reads both the .txt file and the .bin file located inside the .gt3x file given by actilife software and converts it to a csv file in the save format of the .csv file extracted from the sofrtware.
+Reads the "info.txt" and "log.bin" internal files from ".gt3x" files exported by Actilife's software and converts it to a CSV file in the same format of the CSV file extracted directly from the software.
 }
 \seealso{
 gt3x_folder_2_csv converts a folder
