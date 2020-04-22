@@ -35,8 +35,3 @@ Convert GT3X files to CSV format in Actilife's default export format.
 \details{
 Reads the "info.txt" and "log.bin" internal files from ".gt3x" files exported by Actilife's software and converts it to a CSV file in the same format of the CSV file extracted directly from the software.
 }
-\seealso{
-gt3x_folder_2_csv converts a folder
-
-gt3x_2_csv_par converts a a folder using paralell processing
-}
