@@ -417,7 +417,8 @@ gt3x_2_csv <- function(gt3x_files = NULL, outdir = NULL, progress = FALSE,
       it_file = 1:length(gt3x_files),
       .export = c("save_accel", "read_info", "header_csv", "save_header"),
       .inorder = FALSE,
-      .options.snow = opts
+      .options.snow = opts,
+      .errorhandling = "pass"
     ) %dopar% {
       # Initialize runtime counter for this particular file:
       fileStartTime <- Sys.time()
