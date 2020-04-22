@@ -216,8 +216,6 @@ save_accel <- function(acc.file, outdir = NULL, verbose = FALSE){
 #' @importFrom foreach foreach %dopar% registerDoSEQ
 #' @importFrom tcltk tkProgressBar setTkProgressBar
 #' @importFrom parallel stopCluster detectCores
-#' @seealso gt3x_folder_2_csv converts a folder 
-#' @seealso gt3x_2_csv_par converts a a folder using paralell processing
 gt3x_2_csv <- function(gt3x_files = NULL, outdir = NULL, progress = FALSE,
                        parallel = FALSE, cores = detectCores(), logfile = NULL,
                        verbose = FALSE){
