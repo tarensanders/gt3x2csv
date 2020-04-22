@@ -6,16 +6,24 @@ Authors@R: person("Danilo", "de Paula",email= "danilodpsantos@gmail.com",
                    role = c("aut","cre"))
 Description: Converts Actigraph extracted GT3x files to csv files, making it possible to use raw accelerometry data into open source softwares like GGIR R package.
 License: GPL-3
-Imports: data.table,
+Imports: utils,
+         data.table,
          dplyr,
          foreach,
          hms,
          tictoc,
          tidyr,
          tidyverse,
+         snow,
+         tcltk,
+         parallel,
          doSNOW,
          read.gt3x,
-         stringr
+         stringr,
+         logger,
+         magrittr,
+         vroom,
+         gdata
 Remotes: git::https://github.com/danilodpsantos/read.gt3x.git
 Encoding: UTF-8
 LazyData: true
