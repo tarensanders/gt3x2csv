@@ -384,7 +384,7 @@ gt3x_2_csv <- function(gt3x_files = NULL, outdir = NULL, progress = FALSE,
       registerDoSNOW(cluster)
       
       if(verbose){
-        log_success("Cluster allocated for parallelization. Using ", detectCores(), " cores.")
+        log_success("Cluster allocated for parallelization. Using ", cores, " cores.")
       }
     } else {
       registerDoSEQ()
