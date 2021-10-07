@@ -45,7 +45,6 @@ read_info <- function(origin, verbose = FALSE) {
 #' @param verbose logical: wether to show detailed log messages or not (default: FALSE)
 #' @importFrom hms as_hms
 #' @importFrom stringr str_sub
-#' @importFrom magrittr %>%
 #' @importFrom logger log_trace
 #' @export
 save_header <- function(df_file, outfile_csv, verbose = FALSE){
@@ -87,7 +86,6 @@ save_header <- function(df_file, outfile_csv, verbose = FALSE){
 #' @param outdir path for outputting the CSV formatted file
 #' @param verbose logical: wether to show detailed log messages or not (default: FALSE)
 #' @importFrom stringr str_sub str_trim
-#' @importFrom magrittr %>%
 #' @importFrom logger log_trace log_info log_success
 #' @export
 header_csv <- function(origin, outdir, verbose = FALSE){
@@ -140,7 +138,6 @@ header_csv <- function(origin, outdir, verbose = FALSE){
 #' @importFrom read.gt3x read.gt3x
 #' @importFrom stringr str_sub
 #' @importFrom vroom vroom_write
-#' @importFrom magrittr %>%
 #' @importFrom logger log_trace log_success
 #' @importFrom dplyr transmute
 #' @importFrom data.table as.data.table
@@ -168,9 +165,9 @@ save_accel <- function(acc.file, outdir = NULL, verbose = FALSE){
                         imputeZeroes = TRUE) %>%
                 # Here, we drop the 'timestamp' column:
                 as.data.table(.[, -4]) %>%
-                transmute(`Accelerometer X` = Y %>% as.character,
-                          `Accelerometer Y` = X %>% as.character,
-                          `Accelerometer Z` = Z %>% as.character)
+                transmute(`Accelerometer X` = Y %>% as.double,
+                          `Accelerometer Y` = X %>% as.double,
+                          `Accelerometer Z` = Z %>% as.double)
 
   # Writing acceleration data in csv:
   if(verbose){
@@ -203,10 +200,9 @@ save_accel <- function(acc.file, outdir = NULL, verbose = FALSE){
 #' @param progress logical: wether or not to show TCLTK progress bar (default: FALSE)
 #' @param parallel logical: wether or not to use parallel processing (default: FALSE)
 #' @param cores integer: number of cores to use for parallelization. If parallel = FALSE, this argument will be ignored.
-#' @param logfile path to use for outputting logfile. If FALSE, even when verbose = TRUE only print basic info messages and directly to R log. Default (NULL) outputs to R's log when parallel = FALSE and to the same directory as the CSV output when parallel = TRUE.
+#' @param logfile path to use for outputting logfile. If FALSE, even when verbose = TRUE only print basic info messages and directly to R log. Default ('default') outputs to R's log when parallel = FALSE and to the same directory as the CSV output when parallel = TRUE.
 #' @param verbose logical: wether or not to show detailed log messages (default: FALSE)
 #' @export
-#' @importFrom magrittr %>%
 #' @importFrom utils unzip
 #' @importFrom gdata humanReadable
 #' @importFrom stringr str_sub str_detect
@@ -217,7 +213,7 @@ save_accel <- function(acc.file, outdir = NULL, verbose = FALSE){
 #' @importFrom tcltk tkProgressBar setTkProgressBar
 #' @importFrom parallel stopCluster detectCores
 gt3x_2_csv <- function(gt3x_files = NULL, outdir = NULL, progress = FALSE,
-                       parallel = FALSE, cores = detectCores(), logfile = NULL,
+                       parallel = FALSE, cores = detectCores(), logfile = 'default',
                        verbose = FALSE){
   # Configuring logger:
   log_layout(layout_glue_colors)
@@ -384,7 +380,7 @@ gt3x_2_csv <- function(gt3x_files = NULL, outdir = NULL, progress = FALSE,
       registerDoSNOW(cluster)
       
       if(verbose){
-        log_success("Cluster allocated for parallelization. Using ", detectCores(), " cores.")
+        log_success("Cluster allocated for parallelization. Using ", cores, " cores.")
       }
     } else {
       registerDoSEQ()
@@ -440,7 +436,7 @@ gt3x_2_csv <- function(gt3x_files = NULL, outdir = NULL, progress = FALSE,
                str_sub(1, -6))
       
       # Logfile:
-      if(is.null(logfile) & parallel){
+      if(logfile == 'default' & parallel){
         sink(paste0(outdir, "/", outfile, ".txt"))
       } else if(logfile != FALSE){
         sink(logfile)

@@ -10,7 +10,7 @@ gt3x_2_csv(
   progress = FALSE,
   parallel = FALSE,
   cores = detectCores(),
-  logfile = NULL,
+  logfile = "default",
   verbose = FALSE
 )
 }
@@ -25,7 +25,7 @@ gt3x_2_csv(
 
 \item{cores}{integer: number of cores to use for parallelization. If parallel = FALSE, this argument will be ignored.}
 
-\item{logfile}{path to use for outputting logfile. If FALSE, even when verbose = TRUE only print basic info messages and directly to R log. Default (NULL) outputs to R's log when parallel = FALSE and to the same directory as the CSV output when parallel = TRUE.}
+\item{logfile}{path to use for outputting logfile. If FALSE, even when verbose = TRUE only print basic info messages and directly to R log. Default ('default') outputs to R's log when parallel = FALSE and to the same directory as the CSV output when parallel = TRUE.}
 
 \item{verbose}{logical: wether or not to show detailed log messages (default: FALSE)}
 }
