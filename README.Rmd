@@ -1,0 +1,64 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# gt3x2csv
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of gt3x2csv is to convert .gt3x files into (raw) csv files so that they can be analysed in other packages such as [GGIR](https://cran.r-project.org/package=GGIR). This package has a number of advantages over converting files in ActiLife:
+
+1. It is much faster on a per-file basis
+1. Files can be converted in parallel, further reducing conversion time
+1. File sizes are (slightly) reduced compared to ActiLife files.
+
+## Installation
+
+You can install the released version of gt3x2csv from [CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("gt3x2csv")
+```
+
+And the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("tarensanders/gt3x2csv")
+```
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+#library(gt3x2csv)
+## basic example code
+```
+
+What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+
+```{r cars}
+summary(cars)
+```
+
+You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/master/examples>.
+
+You can also embed plots, for example:
+
+```{r pressure, echo = FALSE}
+plot(pressure)
+```
+
+In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.

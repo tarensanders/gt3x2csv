@@ -1,2 +1,4 @@
-^.*\.Rproj$
+^gt3x2csv\.Rproj$
 ^\.Rproj\.user$
+^LICENSE\.md$
+^README\.Rmd$
