@@ -1,5 +1,5 @@
 save_header <- function(gt3x_file,
-                        outfile_csv,
+                        outfile,
                         verbose = FALSE,
                         actilife = FALSE) {
   # Header objects ---------------------------------
@@ -35,9 +35,18 @@ save_header <- function(gt3x_file,
       "Download Date {dwnld_date}\n",
       "Current Memory Address: 0\n",
       "Current Battery Voltage: {batt_volt}\n",
-      "--------------------------------------------------\n"
+      "--------------------------------------------------\n\n"
     )
   # nolint end
 
-  cat(header_txt, file = outfile_csv)
+  cat(header_txt, file = outfile)
+}
+
+save_accel <- function(gt3x_file, outfile, verbose = FALSE) {
+  vroom::vroom_write(data.table::as.data.table(gt3x_file),
+    file = outfile,
+    append = TRUE,
+    delim = ",",
+    col_names = TRUE
+  )
 }
