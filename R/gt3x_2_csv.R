@@ -1,12 +1,40 @@
+#' Convert GT3X Files to Raw CSV
+#'
+#' TODO ADD DESCRIPTION
+#'
+#' @param gt3x_files the file or files to convert. You can provide any of a
+#' path to a single file, a path to a directory, or a vector of file paths.
+#' @param outdir a directory where converted CSV files will be saved. If NULL,
+#' the files are saved in the same directory as the original files. If
+#' gt3x_files is a directory and `recursive==TRUE`, the folder structure is
+#' replicated in outdir.
+#' @param progress Display a progress bar. Defaults to TRUE.
+#' @param parallel Use a parallel backend. Defaults to TRUE.
+#' @param cores If `parallel == TRUE`, how many cores are used for processing.
+#' @param logfile create a log file for debugging. Can be one of `FALSE`
+#' (default; do not create a file), `TRUE` (create the log file at the default
+#' location), or a path for where to store the log file.
+#' @param verbose logical for if additional information should be displayed.
+#' Defaults to `FALSE`
+#' @param recursive if gt3x_files is a directory, should sub-folders be searched
+#' for GT3X  files?
+#'
+#' @importFrom foreach %dopar%
+#'
+#' @return
+#' @export
+#'
+#' @examples
 gt3x_2_csv <- function(gt3x_files,
-                       outdir,
+                       outdir = NULL,
                        progress = FALSE,
                        parallel = TRUE,
                        cores = parallel::detectCores() - 1,
                        logfile = FALSE,
                        verbose = FALSE,
                        recursive = TRUE) {
-  setup_log(logfile, verbose)
+  # TODO sort out a system for outdir
+  setup_log(logfile, verbose, outdir)
 
   proc_type <- check_file_input(gt3x_files)
 
@@ -27,22 +55,22 @@ gt3x_2_csv <- function(gt3x_files,
 
   validate_gt3x_files(gt3x_files, proc_type)
 
-  test_vec <- c(file.path(gt3x_files, "EE_left_29.5.2017-05-30.gt3x"),
-                file.path(gt3x_files, "SS_left_19.5.2017-05-22.gt3x"),
-                file.path(gt3x_files, "gt3x_2_csv_log.gt3x"))
+  # Setup processing backend
+  if (!parallel | proc_type=="single") {
+    logger::log_info("Setting up a sequential backend")
+    foreach::registerDoSEQ()
+  } else {
+    logger::log_info("Setting up a parallel backend with {cores} cores")
+    cl <- parallel::makeCluster(cores)
+    doSNOW::registerDoSNOW(cl)
+  }
 
-  test_dir <- "C:\\Users\\taren\\Downloads\\Test gt3x Files"
+  #TODO progress bar
 
-  test_dir_files <- list_gt3x_rec(test_dir)
-  read.gt3x::have_log_and_info(test_dir_files)
 
-  valid_files <- sapply(test_vec, read.gt3x::have_log_and_info)
 
-  valid_files[!valid_files]
 
-  # If single file, skip the parallel stuff
-
-  # If multiple files, setup the parallel options
+  parallel::stopCluster(cl)
 
 }
 

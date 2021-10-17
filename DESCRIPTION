@@ -15,10 +15,12 @@ Description: Converts Actigraph extracted GT3x files to csv files, making it pos
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Imports: 
     crayon,
     data.table,
+    doSNOW,
+    foreach,
     glue,
     logger,
     parallel,

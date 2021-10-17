@@ -1,4 +1,4 @@
-setup_log <- function(logfile, verbose) {
+setup_log <- function(logfile, verbose, outdir) {
   # Set up logging
   logger::log_layout(logger::layout_glue_colors)
   if (verbose) {
@@ -37,10 +37,10 @@ check_file_input <- function(gt3x_files) {
   single <- directory <- vec <- FALSE
 
   if (length(gt3x_files) == 1) {
-    if (file_test("-f", gt3x_files)) {
+    if (utils::file_test("-f", gt3x_files)) {
       proc_type <- "single"
       logger::log_trace("gt3x_files is a single file")
-    } else if (file_test("-d", gt3x_files)) {
+    } else if (utils::file_test("-d", gt3x_files)) {
       proc_type <- "dir"
       logger::log_trace("gt3x_files is a directory")
     } else {
@@ -68,10 +68,11 @@ validate_gt3x_files <- function(gt3x_files, proc_type){
   }
 
   if (proc_type=="directory" | proc_type=="vector" ) {
-    valid_files_num <- sum(sapply(gt3x_files, read.gt3x::have_log_and_info))
+    valid_files <- sapply(gt3x_files, read.gt3x::have_log_and_info)
 
-    if (valid_files_num < length(gt3x_files)) {
-      err <- "{crayon::blue(gt3x_files)} is not a valid gt3x file"
+    if (sum(valid_files) < length(gt3x_files)) {
+      failed_files <- names(valid_files[valid_files==FALSE])
+      err <- "Invalid file: {crayon::blue(failed_files)}"
       stop(glue::glue(err))
     }
   }
