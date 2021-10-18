@@ -58,7 +58,7 @@ check_file_input <- function(gt3x_files) {
       proc_type <- "single"
       logger::log_trace("gt3x_files is a single file")
     } else if (utils::file_test("-d", gt3x_files)) {
-      proc_type <- "dir"
+      proc_type <- "directory"
       logger::log_trace("gt3x_files is a directory")
     } else {
       err <- "Could not find file or directory {crayon::blue(gt3x_files)}"
@@ -144,7 +144,7 @@ generate_outputfiles <- function(gt3x_files, outdir = NULL) {
   } else {
     # Files are saved to the outdir directory
     if (!utils::file_test("-d", outdir)) {
-      err <- "{crayon::blue(outdir)} is not a valid directory"
+      err <- glue::glue("{crayon::blue(outdir)} is not a valid directory")
       stop(err)
     }
     out_paths <- file.path(

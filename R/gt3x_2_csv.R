@@ -9,6 +9,8 @@
 #' @param progress Display a progress bar. Defaults to TRUE.
 #' @param parallel Use a parallel backend. Defaults to TRUE.
 #' @param cores If `parallel == TRUE`, how many cores are used for processing.
+#' By default this is the smaller of the number of cores available minus 1, or
+#' the number of files to process.
 #' @param logfile create a log file for debugging. Can be one of `FALSE`
 #' (default; do not create a file), `TRUE` (create the log file at the default
 #' location), or a path for where to store the log file.
@@ -30,7 +32,7 @@ gt3x_2_csv <- function(gt3x_files,
                        outdir = NULL,
                        progress = FALSE,
                        parallel = TRUE,
-                       cores = parallel::detectCores() - 1,
+                       cores = NULL,
                        logfile = FALSE,
                        verbose = FALSE,
                        recursive = TRUE,
@@ -44,7 +46,7 @@ gt3x_2_csv <- function(gt3x_files,
     logger::log_trace("Converting directory to a vector of files")
     gt3x_files <- list_gt3x_rec(gt3x_files, recursive)
     num_files <- length(gt3x_files)
-    msg <- "Found {crayon::blue(num_files)} gt3x files"
+    msg <- "Found {crayon::blue(num_files)} GT3X files"
 
     if (num_files < 1) {
       stop(msg)
@@ -57,11 +59,16 @@ gt3x_2_csv <- function(gt3x_files,
   outfiles <- generate_outputfiles(gt3x_files, outdir)
 
   # Setup processing backend
+  if (is.null(cores)){
+    cores <- min(length(gt3x_files), parallel::detectCores() - 1)
+  }
+
   if (!parallel | proc_type == "single") {
     logger::log_info("Setting up a sequential backend")
     foreach::registerDoSEQ()
   } else {
-    logger::log_info("Setting up a parallel backend with {cores} cores")
+    logger::log_info(
+      "Setting up a parallel backend with {crayon::blue(cores)} cores")
     cl <- parallel::makeCluster(cores)
     doSNOW::registerDoSNOW(cl)
   }
@@ -89,7 +96,7 @@ gt3x_2_csv <- function(gt3x_files,
       }
     )
 
-    progress <- function(n) {
+    update_progress <- function(n) {
       switch(.Platform$OS.type,
         windows = {
           utils::setWinProgressBar(bar,
@@ -106,19 +113,21 @@ gt3x_2_csv <- function(gt3x_files,
       )
     }
 
-    opts <- list(progress = progress)
+    opts <- list(progress = update_progress)
   } else {
     opts <- list()
   }
 
   # Process the files
   i <- 1
+  start_loop <- Sys.time()
   foreach::foreach(
     i = seq_len(length(gt3x_files)),
     .inorder = FALSE,
+    .export = c("convert_file", "save_header", "save_accel"),
     .options.snow = opts
   ) %dopar% {
-    convert_file(gt3x_files[i], outfiles[1])
+    convert_file(gt3x_files[i], outfiles[i])
   }
 
   if (parallel & proc_type != "single") parallel::stopCluster(cl)
@@ -126,6 +135,13 @@ gt3x_2_csv <- function(gt3x_files,
   if (progress) {
     close(bar)
   }
+  loop_comp <- difftime(Sys.time(),start_loop)
+  loop_comp_time <- round(as.numeric(loop_comp), 2)
+  loop_comp_units <- attr(loop_comp, "units")
+  msg <- glue::glue("Finished processing {crayon::blue(length(gt3x_files))} ",
+                    "files in {crayon::blue(loop_comp_time, loop_comp_units)}")
+  logger::log_success(msg)
+
 }
 
 #' Convert a Single GT3X File
@@ -148,8 +164,8 @@ convert_file <- function(gt3x_file, outfile, actilife = FALSE) {
   logger::log_info()
   file_start <- Sys.time()
   gt3x_file_read <- read.gt3x::read.gt3x(gt3x_file)
-  save_header(gt3x_file_read, outfile, actilife)
-  save_accel(gt3x_file_read, outfile)
+  gt3x2csv:::save_header(gt3x_file_read, outfile, actilife)
+  gt3x2csv:::save_accel(gt3x_file_read, outfile)
 
   comp_time <- round(
     as.numeric(difftime(Sys.time(),
@@ -205,7 +221,7 @@ save_header <- function(gt3x_file,
   start_date <- format(start_date_unfmt, "%d/%m/%Y")
   dwnld_time <- format(dwnld_date_unfmt, format = "%H:%M:%S")
   dwnld_date <- format(dwnld_date_unfmt, "%d/%m/%Y")
-  batt_volt <- header$`Battery Voltage`
+  batt_volt <- gsub(",","", header$`Battery Voltage`)
   firmware <- header$Firmware
 
   # Header Text -------------------------------------
@@ -220,7 +236,7 @@ save_header <- function(gt3x_file,
       "Download Time {dwnld_time}\n",
       "Download Date {dwnld_date}\n",
       "Current Memory Address: 0\n",
-      "Current Battery Voltage: {batt_volt}\n",
+      "Current Battery Voltage: {batt_volt}     Mode = 12\n",
       "--------------------------------------------------\n\n"
     )
   # nolint end
@@ -240,8 +256,13 @@ utils::globalVariables(c("sample_rate", "serial_num", "start_time",
 #'
 #' @return Nothing
 save_accel <- function(gt3x_file, outfile) {
+  outdata <- data.table::as.data.table(gt3x_file)
+  outdata <- setNames(outdata, c("Accelerometer X",
+                                 "Accelerometer Y",
+                                 "Accelerometer Z"))
+
   logger::log_trace("Writing activity to CSV")
-  vroom::vroom_write(data.table::as.data.table(gt3x_file),
+  vroom::vroom_write(outdata,
     file = outfile,
     append = TRUE,
     delim = ",",
