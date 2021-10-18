@@ -27,14 +27,12 @@ setup_log <- function(logfile, verbose, outdir) {
   }
 
   logger::log_errors()
-
 }
 
 
 check_file_input <- function(gt3x_files) {
   # Check if single file, vector, or directory
   logger::log_trace("Checking what format gt3x_files is in")
-  single <- directory <- vec <- FALSE
 
   if (length(gt3x_files) == 1) {
     if (utils::file_test("-f", gt3x_files)) {
@@ -53,36 +51,59 @@ check_file_input <- function(gt3x_files) {
   }
 
   return(proc_type)
-
 }
 
-validate_gt3x_files <- function(gt3x_files, proc_type){
+validate_gt3x_files <- function(gt3x_files, proc_type) {
   logger::log_info("Validating files")
   # Validate the files
-  if (proc_type=="single") {
+  if (proc_type == "single") {
     if (!read.gt3x::is_gt3x(gt3x_files) |
-        !read.gt3x::have_log_and_info(gt3x_files)) {
+      !read.gt3x::have_log_and_info(gt3x_files)) {
       err <- "{crayon::blue(gt3x_files)} is not a valid gt3x file"
       stop(glue::glue(err))
     }
   }
 
-  if (proc_type=="directory" | proc_type=="vector" ) {
+  if (proc_type == "directory" | proc_type == "vector") {
     valid_files <- sapply(gt3x_files, read.gt3x::have_log_and_info)
 
     if (sum(valid_files) < length(gt3x_files)) {
-      failed_files <- names(valid_files[valid_files==FALSE])
+      failed_files <- names(valid_files[valid_files == FALSE])
       err <- "Invalid file: {crayon::blue(failed_files)}"
       stop(glue::glue(err))
     }
   }
 
   logger::log_success("Files validated")
-
 }
 
 
-list_gt3x_rec <- function(path, recursive=TRUE){
+list_gt3x_rec <- function(path, recursive = TRUE) {
   files <- list.files(path = path, full.names = TRUE, recursive = TRUE)
   return(files[read.gt3x::is_gt3x(files)])
+}
+
+generate_outputfiles <- function(gt3x_files, outdir) {
+  if (is.null(outdir)) {
+    # Files are saved to the same place
+    out_paths <- file.path(
+      dirname(test_vec),
+      gsub(".gt3x$", "RAW.csv", basename(test_vec),
+        ignore.case = TRUE
+      )
+    )
+  } else {
+    # Files are saved to the outdir directory
+    if (!utils::file_test("-d", outdir)) {
+      err <- "{crayon::blue(outdir)} is not a valid directory"
+      stop(err)
+    }
+    out_paths <- file.path(
+      outdir,
+      gsub(".gt3x$", "RAW.csv", basename(test_vec),
+        ignore.case = TRUE
+      )
+    )
+  }
+  return(out_paths)
 }
