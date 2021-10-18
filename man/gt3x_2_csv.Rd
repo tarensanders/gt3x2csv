@@ -12,17 +12,16 @@ gt3x_2_csv(
   cores = parallel::detectCores() - 1,
   logfile = FALSE,
   verbose = FALSE,
-  recursive = TRUE
+  recursive = TRUE,
+  actilife = FALSE
 )
 }
 \arguments{
-\item{gt3x_files}{the file or files to convert. You can provide any of a
+\item{gt3x_files}{The file or files to convert. You can provide any of a
 path to a single file, a path to a directory, or a vector of file paths.}
 
-\item{outdir}{a directory where converted CSV files will be saved. If NULL,
-the files are saved in the same directory as the original files. If
-gt3x_files is a directory and \code{recursive==TRUE}, the folder structure is
-replicated in outdir.}
+\item{outdir}{A directory where converted CSV files will be saved. If NULL,
+the files are saved in the same directory as the original files.}
 
 \item{progress}{Display a progress bar. Defaults to TRUE.}
 
@@ -34,14 +33,18 @@ replicated in outdir.}
 (default; do not create a file), \code{TRUE} (create the log file at the default
 location), or a path for where to store the log file.}
 
-\item{verbose}{logical for if additional information should be displayed.
+\item{verbose}{Logical for if additional information should be displayed.
 Defaults to \code{FALSE}}
 
-\item{recursive}{if gt3x_files is a directory, should sub-folders be searched
+\item{recursive}{If gt3x_files is a directory, should sub-folders be searched
 for GT3X  files?}
+
+\item{actilife}{The version string for the header. By default, this is
+"gt3x2csv v0.2.0". If your analysis depends on knowing an Actilife version,
+you can provide one here.}
 }
 \value{
-
+Nothing. Files are saved as a side effect.
 }
 \description{
 TODO ADD DESCRIPTION

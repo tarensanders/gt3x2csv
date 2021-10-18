@@ -2,9 +2,9 @@
 #'
 #' TODO ADD DESCRIPTION
 #'
-#' @param gt3x_files the file or files to convert. You can provide any of a
+#' @param gt3x_files The file or files to convert. You can provide any of a
 #' path to a single file, a path to a directory, or a vector of file paths.
-#' @param outdir a directory where converted CSV files will be saved. If NULL,
+#' @param outdir A directory where converted CSV files will be saved. If NULL,
 #' the files are saved in the same directory as the original files.
 #' @param progress Display a progress bar. Defaults to TRUE.
 #' @param parallel Use a parallel backend. Defaults to TRUE.
@@ -12,17 +12,17 @@
 #' @param logfile create a log file for debugging. Can be one of `FALSE`
 #' (default; do not create a file), `TRUE` (create the log file at the default
 #' location), or a path for where to store the log file.
-#' @param verbose logical for if additional information should be displayed.
+#' @param verbose Logical for if additional information should be displayed.
 #' Defaults to `FALSE`
-#' @param recursive if gt3x_files is a directory, should sub-folders be searched
+#' @param recursive If gt3x_files is a directory, should sub-folders be searched
 #' for GT3X  files?
-#' @param actilife the version string for the header. By default, this is
+#' @param actilife The version string for the header. By default, this is
 #' "gt3x2csv v0.2.0". If your analysis depends on knowing an Actilife version,
 #' you can provide one here.
 #'
 #' @importFrom foreach %dopar%
 #'
-#' @return
+#' @return Nothing. Files are saved as a side effect.
 #' @export
 #'
 #' @examples
@@ -49,9 +49,7 @@ gt3x_2_csv <- function(gt3x_files,
     if (num_files < 1) {
       stop(msg)
     }
-
     logger::log_info(msg)
-
   }
 
   validate_gt3x_files(gt3x_files, proc_type)
@@ -71,65 +69,76 @@ gt3x_2_csv <- function(gt3x_files,
   # Setup progress bar
   if (progress) {
     bar <- switch(.Platform$OS.type,
-                  windows = {
-                    utils::winProgressBar(
-                      title = "Converting GT3X files to CSV. Progress:",
-                      min = 0,
-                      max = length(gt3x_files),
-                      label = "0% done",
-                      width = 500
-                    )
-                  },
-                  unix = {
-                    tcltk::tkProgressBar(
-                      title = "Converting GT3X files to CSV. Progress:",
-                      min = 0,
-                      max = length(gt3x_files),
-                      label = "0% done",
-                      width = 500
-                    )
-                  }
+      windows = {
+        utils::winProgressBar(
+          title = "Converting GT3X files to CSV. Progress:",
+          min = 0,
+          max = length(gt3x_files),
+          label = "0% done",
+          width = 500
+        )
+      },
+      unix = {
+        tcltk::tkProgressBar(
+          title = "Converting GT3X files to CSV. Progress:",
+          min = 0,
+          max = length(gt3x_files),
+          label = "0% done",
+          width = 500
+        )
+      }
     )
 
-    updateProgress <- function(n) {
+    progress <- function(n) {
       switch(.Platform$OS.type,
-             windows = {
-               utils::setWinProgressBar(bar,
-                                        n,
-                                        label = paste0(round(n / length(gt3x_files) * 100, 0), "% done")
-               )
-             },
-             unix = {
-               tcltk::setTkProgressBar(bar,
-                                       n,
-                                       label = paste0(round(n / length(gt3x_files) * 100, 0), "% done")
-               )
-             }
+        windows = {
+          utils::setWinProgressBar(bar,
+            n,
+            label = paste0(round(n / length(gt3x_files) * 100, 0), "% done")
+          )
+        },
+        unix = {
+          tcltk::setTkProgressBar(bar,
+            n,
+            label = paste0(round(n / length(gt3x_files) * 100, 0), "% done")
+          )
+        }
       )
     }
 
-    opts <- list(progress = updateProgress)
+    opts <- list(progress = progress)
   } else {
     opts <- list()
   }
 
-
   # Process the files
+  i <- 1
   foreach::foreach(
-    i = 1:length(gt3x_files),
+    i = seq_len(length(gt3x_files)),
     .inorder = FALSE,
+    .options.snow = opts
   ) %dopar% {
     convert_file(gt3x_files[i], outfiles[1])
   }
 
   if (parallel & proc_type != "single") parallel::stopCluster(cl)
 
-  if(progress){
+  if (progress) {
     close(bar)
   }
-
 }
 
+#' Convert a Single GT3X File
+#'
+#' Not intended to be called directly. The function to drive the foreach loop.
+#'
+#' @param gt3x_file A path to a single GT3X file
+#' @param outfile The path to save the resulting CSV file
+#' @param actilife The version string for the header. By default, this is
+#' "gt3x2csv v0.2.0". If your analysis depends on knowing an Actilife version,
+#' you can provide one here.
+#'
+#' @return nothing
 convert_file <- function(gt3x_file, outfile, actilife = FALSE) {
   msg <- glue::glue("Starting conversion.
                     Input: {crayon::blue(gt3x_file)}
@@ -142,12 +151,15 @@ convert_file <- function(gt3x_file, outfile, actilife = FALSE) {
   save_header(gt3x_file_read, outfile, actilife)
   save_accel(gt3x_file_read, outfile)
 
-  comp_time <- round(as.numeric(difftime(Sys.time(),
-                                         file_start,
-                                         units = "secs")),
-                     2)
+  comp_time <- round(
+    as.numeric(difftime(Sys.time(),
+      file_start,
+      units = "secs"
+    )),
+    2
+  )
 
-  fsize <- format(structure(file.size(test_vec[1]),
+  fsize <- format(structure(file.size(gt3x_file),
     class = "object_size"
   ), units = "auto", standard = "SI")
 
@@ -157,10 +169,21 @@ convert_file <- function(gt3x_file, outfile, actilife = FALSE) {
     "Approx file size: {crayon::blue(fsize)}."
   )
   logger::log_success(msg)
-
 }
 
 
+#' Save Information to CSV Header
+#'
+#' Reads information from the 'info.txt' file and writes it in the expected
+#' format to a CSV file. Not intended to be called directly.
+#'
+#' @param gt3x_file An object read using `read.gt3x::read.gt3x()`
+#' @param outfile The path to save the resulting CSV file
+#' @param actilife The version string for the header. By default, this is
+#' "gt3x2csv v0.2.0". If your analysis depends on knowing an Actilife version,
+#' you can provide one here.
+#'
+#' @return nothing
 save_header <- function(gt3x_file,
                         outfile,
                         actilife = FALSE) {
@@ -204,7 +227,18 @@ save_header <- function(gt3x_file,
   logger::log_trace("Writing header to CSV")
   cat(header_txt, file = outfile)
 }
+utils::globalVariables(c("sample_rate", "serial_num", "start_time",
+                         "start_date", "dwnld_time", "dwnld_date", "batt_volt",
+                         "firmware"))
 
+#' Write Activity Data to CSV
+#'
+#' Write the activity data to a CSV file. Not intended to be called directly.
+#'
+#' @param gt3x_file An object read using `read.gt3x::read.gt3x()`
+#' @param outfile The path to save the resulting CSV file
+#'
+#' @return Nothing
 save_accel <- function(gt3x_file, outfile) {
   logger::log_trace("Writing activity to CSV")
   vroom::vroom_write(data.table::as.data.table(gt3x_file),
