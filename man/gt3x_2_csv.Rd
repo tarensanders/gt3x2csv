@@ -2,36 +2,52 @@
 % Please edit documentation in R/gt3x_2_csv.R
 \name{gt3x_2_csv}
 \alias{gt3x_2_csv}
-\title{Export GT3X as CSV}
+\title{Convert GT3X Files to Raw CSV}
 \usage{
 gt3x_2_csv(
-  gt3x_files = NULL,
+  gt3x_files,
   outdir = NULL,
   progress = FALSE,
-  parallel = FALSE,
-  cores = detectCores(),
-  logfile = "default",
-  verbose = FALSE
+  parallel = TRUE,
+  cores = NULL,
+  logfile = FALSE,
+  verbose = FALSE,
+  recursive = TRUE,
+  actilife = FALSE
 )
 }
 \arguments{
-\item{gt3x_files}{complete path to a GT3X file to convert. Can also be a vector of complete filenames or a directory with ".gt3x" files in it.}
+\item{gt3x_files}{The file or files to convert. You can provide any of a
+path to a single file, a path to a directory, or a vector of file paths.}
 
-\item{outdir}{path to a directory for outputting the CSV formatted file (default: NULL). There will be another directory created inside this one, called "/csv".}
+\item{outdir}{A directory where converted CSV files will be saved. If NULL,
+the files are saved in the same directory as the original files.}
 
-\item{progress}{logical: wether or not to show TCLTK progress bar (default: FALSE)}
+\item{progress}{Display a progress bar. Defaults to TRUE.}
 
-\item{parallel}{logical: wether or not to use parallel processing (default: FALSE)}
+\item{parallel}{Use a parallel backend. Defaults to TRUE.}
 
-\item{cores}{integer: number of cores to use for parallelization. If parallel = FALSE, this argument will be ignored.}
+\item{cores}{If \code{parallel == TRUE}, how many cores are used for processing.
+By default this is the smaller of the number of cores available minus 1, or
+the number of files to process.}
 
-\item{logfile}{path to use for outputting logfile. If FALSE, even when verbose = TRUE only print basic info messages and directly to R log. Default ('default') outputs to R's log when parallel = FALSE and to the same directory as the CSV output when parallel = TRUE.}
+\item{logfile}{create a log file for debugging. Can be one of \code{FALSE}
+(default; do not create a file), \code{TRUE} (create the log file at the default
+location), or a path for where to store the log file.}
 
-\item{verbose}{logical: wether or not to show detailed log messages (default: FALSE)}
+\item{verbose}{Logical for if additional information should be displayed.
+Defaults to \code{FALSE}}
+
+\item{recursive}{If gt3x_files is a directory, should sub-folders be searched
+for GT3X  files?}
+
+\item{actilife}{The version string for the header. By default, this is
+"gt3x2csv v0.2.0". If your analysis depends on knowing an Actilife version,
+you can provide one here.}
+}
+\value{
+Nothing. Files are saved as a side effect.
 }
 \description{
-Convert GT3X files to CSV format in Actilife's default export format.
-}
-\details{
-Reads the "info.txt" and "log.bin" internal files from ".gt3x" files exported by Actilife's software and converts it to a CSV file in the same format of the CSV file extracted directly from the software.
+Convert a GT3X file to the raw CSV format provided by ActiLife.
 }

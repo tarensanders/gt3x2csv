@@ -1,34 +1,33 @@
 Package: gt3x2csv
-Type: Package
 Title: Converting actigraph's GT3X files to CSV files
-Version: 0.1.1
-Authors@R: person("Danilo", "de Paula",email= "danilodpsantos@gmail.com",
-                   role = c("aut","cre"))
+Version: 0.2.1.9000
+Authors@R: 
+    c(person(given = "Taren",
+           family = "Sanders",
+           role = c("aut", "cre"),
+           email = "taren.sanders@acu.edu.au",
+           comment = c(ORCID = "0000-0002-4504-6008")),
+      person(given = "Danilo",
+           family = "de Paula",
+           role = c("aut"),
+           email = "danilodpsantos@gmail.com"))
 Description: Converts Actigraph extracted GT3x files to csv files, making it possible to use raw accelerometry data into open source softwares like GGIR R package.
-License: GPL-3
-Imports: utils,
-         rlang,
-         data.table,
-         dplyr,
-         foreach,
-         hms,
-         tictoc,
-         tidyr,
-         tidyverse,
-         snow,
-         tcltk,
-         parallel,
-         doSNOW,
-         read.gt3x,
-         stringr,
-         logger,
-         magrittr,
-         vroom,
-         gdata
-Requires: logger,
-         vroom,
-         gdata
-Remotes: git::https://github.com/danilodpsantos/read.gt3x.git
+License: GPL (>= 3)
 Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.1.1
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Imports: 
+    crayon,
+    data.table,
+    doSNOW,
+    foreach,
+    glue,
+    logger,
+    parallel,
+    read.gt3x (>= 1.0.2),
+    vroom
+Suggests: 
+    withr,
+    testthat (>= 3.0.0),
+    readr
+Config/testthat/edition: 3

@@ -2,20 +2,18 @@
 % Please edit documentation in R/gt3x_2_csv.R
 \name{save_accel}
 \alias{save_accel}
-\title{Export GT3X contents}
+\title{Write Activity Data to CSV}
 \usage{
-save_accel(acc.file, outdir = NULL, verbose = FALSE)
+save_accel(gt3x_file, outfile)
 }
 \arguments{
-\item{acc.file}{path to a GT3X file to convert}
+\item{gt3x_file}{An object read using \code{read.gt3x::read.gt3x()}}
 
-\item{outdir}{path for outputting the CSV formatted file (default: NULL). There will be another directory created inside this one, called "/csv".}
-
-\item{verbose}{logical: wether to show detailed log messages or not (default: FALSE)}
+\item{outfile}{The path to save the resulting CSV file}
+}
+\value{
+Nothing
 }
 \description{
-Converts acceleration data from a ".gt3x" file to a data.frame and exports it to CSV.
-}
-\details{
-This function reads the binary data inside the ".gt3x" file's internal "log.bin" file and saves it in CSV format.
+Write the activity data to a CSV file. Not intended to be called directly.
 }

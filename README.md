@@ -1,52 +1,134 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
 # gt3x2csv
 
-`gt3x2csv` is an R package designed to convert Actigraph gt3x files to csv files with the same data structure exported by the Actilife software.
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/tarensanders/gt3x2csv/workflows/R-CMD-check/badge.svg)](https://github.com/tarensanders/gt3x2csv/actions)
+<!-- badges: end -->
+
+The goal of gt3x2csv is to convert .gt3x files into (raw) csv files so
+that they can be analysed in other packages such as
+[GGIR](https://cran.r-project.org/package=GGIR). The goals of this
+package are:
+
+1.  To create output that as closely mimics output from ActiLife as
+    possible.
+2.  To be orders of magnitude faster than using ActiLife for conversion.
+
+This package is a rewrite of a package previously written by Danilo de
+Paula Santos ([@danilodpsantos](https://github.com/danilodpsantos)).
+
+## Why use gt3x2csv instead of ActiLife?
+
+gt3x2csv has a number of advantages over converting files in ActiLife.
+Firstly, it is substantially faster both on a per-file basis, and
+overall. This is largely thanks to the great work on the
+[`AGread`](https://github.com/paulhibbing/AGread)) package, which uses
+C++ to read the activity data quickly. gt3x2csv is further bolsted by
+being able to process files in parallel something not available on
+ActiLife.
+
+As an example of how much faster it is, see the table below.
+
+| Method                                                          | One File | Five Files | Thirty Files<sup>[1](#myfootnote1)</sup> |
+|-----------------------------------------------------------------|----------|------------|------------------------------------------|
+| **Actilife<sup>[2](#myfootnote2)</sup>**                        | 58s      | 4min 55s   | 29min 20s                                |
+| **gt3x2csv<sup>[3](#myfootnote3)</sup><sub>(Sequential)</sub>** | 8s       | 40s        | 4mins                                    |
+| **gt3x2csv<sub>(Parallel)</sub>**                               | 9s       | 16s        | 3mins                                    |
+
+<a name="myfootnote1"><sup>1</sup></a> All files were 159MB, or a little
+over three days of data.<br> <a name="myfootnote2"><sup>2</sup></a>
+Using ActiLife v6.11.9 (newer versions might be faster.<br>
+<a name="myfootnote3"><sup>3</sup></a> As run on a AMD Ryzen 7 3700X
+8-Core CPU; 32GB of RAM.
+
+## What does gt3x2csv do?
+
+gt3x2csv uses [`AGread`](https://github.com/paulhibbing/AGread) to
+unpack the GT3X file, and formats the output in the same way as
+ActiLife.
 
 ## Installation
 
+gt3x2csv is not (currently) available on CRAN. You can install from
+GitHub:
+
 ``` r
-# Install from CRAN (when available)
-install.packages("gt3x2csv")
-# Or the development version from GitHub
 # install.packages("devtools")
-devtools::install_github("danilodpsantos/gt3x2csv")
+devtools::install_github("tarensanders/gt3x2csv")
 ```
 
-## Usage
+## Example
 
-Soon
+Using gt3x2csv is simple. You can provide any of a single file to
+process, a vector of file paths, or a directory. If you do not provide
+an output directory, the resulting CSV files are stored in the sample
+place as the originals. Here is an example:
 
-## Objective
+``` r
+library(gt3x2csv)
 
-This project was designed with the intent of converting files from the gt3x Actigraph generated files to csv files with the same structure used when exporting/converting raw accelerometer data in the csv format directly from the Actilife software.
+my_directory <- gt3x2csv:::local_dir_with_files()
 
-## What is the problem? 
+# An example directory with some GT3X files
+list.files(my_directory)
+#> [1] "test_file1.gt3x" "test_file2.gt3x" "test_file3.gt3x" "test_file4.gt3x"
+#> [5] "test_file5.gt3x"
+gt3x_2_csv(
+  gt3x_files = my_directory,
+  outdir = NULL, # Save to the same place
+  progress = FALSE, # Show a progress bar?
+  parallel = TRUE # Process files in parallel?
+  )
 
-Recently, many large scientific studies are using raw accelerometer data to perform physical activity and sleep analysis, and one of the most used accelerometer brands is Actigraph. 
-Actigraph uses the full license Actilife software to set the analysis and to export data from the devices. 
-The raw accelerometer data can be exported from the Actilife software in 2 different formats, gt3x and csv. For a 24 hour/ 7 days protocol, with the data sampling frequency of 30 Hz, the size of the gt3x file gets around 50MB, while the csv file size is of around 500MB, which can generate an storage problem for large studies. Also, the Actilife software takes around 1 minute to convert each file to the csv format, and can process only one file at a time. For a study with 10.000 participants, the estimated time would be of 7 days only to convert all the files. 
-Another point is the fact that many studies only have one full license of the Actilife software, making the data extracting / conversion a cumbersome task.
-Most of the raw accelerometer data analysis is performed using the GGIR R package (https://cran.r-project.org/web/packages/GGIR/index.html) which provides extensive information about physical activity, sleep and 24 hour activity cycles. The GGIR package only accepts the Actigraph data structure if it was extracted to csv files, making it impossible to use the Actigraph proprietary gt3x file to perform the analysis.
-For chronobiology and time series analysis there are other packages and softwares such as ElTmps (http://www.el-temps.com/principal.html).
+# Directory now has the new files.
+list.files(my_directory)
+#>  [1] "test_file1.gt3x"   "test_file1RAW.csv" "test_file2.gt3x"  
+#>  [4] "test_file2RAW.csv" "test_file3.gt3x"   "test_file3RAW.csv"
+#>  [7] "test_file4.gt3x"   "test_file4RAW.csv" "test_file5.gt3x"  
+#> [10] "test_file5RAW.csv"
+```
 
-## How can this package help?
+# Caveat Emptor
 
-The `gt3x2csv` package makes the data processing and storage of raw accelerometer data feasible, since it allows the conversion of Actigraph raw accelerometer data exported in the .gt3x format to .csv files, enabling the use of packages like GGIR to process Actigraph data. 
-The main advantages are that the conversion of 1 file takes around 30 seconds (half the time of Actilife software) and the csv file size for a 24 hour/ 7 days collection protocol is around 250MB (half the size of the csv exported from Actilife software).
-Another advantage is that the package allows for parallel data processing, enabling the processing of more than one file at a time.
-Last, but not least, the package lets researchers which have .gt3x files and don't have the Actilife software to perform their analysis without the need of the software.
+A few warnings for those using gt3x2csv.
 
-## How does the package work?
+### File Sizes
 
-The .gt3x file is a zip file containing a .txt file, with metadata about the data collection and a .bin file containing the accelerometer data.
-The package uses the .txt file to generate the header of the csv file with the information about the protocol and the .bin file to read the data (through `read.gt3x` R package) and record it in the the csv file (using `data.table` R package). The `read.gt3x` package implements a c++ code to read .gt3x files, which makes it fast and smooth (for more information look at: https://github.com/THLfi/read.gt3x). 
+A GT3X file is a zip file containing some metadata (`info.txt`) and a
+binary file (`log.bin`) with data recorded by the device. The GT3X file
+is compressed, making it smaller than the raw versions of these files.
+Converting to CSV uncompresses the file, and will take up more space.
+This is true regardless of if you use ActiLife or gt3x2csv. How much
+extra space seems to depend on the size of the file. Here’s three files,
+and their compressed/uncompressed sizes.
 
-## Author
+| File       | GT3X Size | CSV Size | Times Larger |
+|------------|-----------|----------|--------------|
+| **File 1** | 200KB     | 4.28MB   | \~22         |
+| **File 2** | 159MB     | 524MB    | \~3.3        |
+| **File 3** | 352MB     | 1.13GB   | \~3.3        |
 
-Danilo de Paula Santos (https://github.com/danilodpsantos)
+All this is to say that if you can do your analysis without saving CSV
+files in the middle (e.g., using
+[`read.gt3x`](https://github.com/THLfi/read.gt3x) or
+[`AGread`](https://github.com/paulhibbing/AGread)), that would be
+better. But, some processing packages (e.g.,
+[`GGIR`](https://github.com/wadpac/GGIR)) don’t allow this since (for
+good reasons).
 
-## Contributors
+### Memory Use
 
-Rodrigo Citton Padilha dos Reis (https://github.com/rdosreis)
-Angelo Bastos (https://github.com/angelorbastos)
-Fernando Souza (https://github.com/fcsest)
+In the process of unzipping the files, the data are temporarily stored
+in memory. If you run gt3x2csv in parallel with lots of cores, you might
+run out of memory. If this happens, just set `cores` to be a lower
+value.
+
+### Differences to ActiLife
+
+I’ve validated gt3x2csv against the output from ActiLife using several
+different files. There are also tests to check that changes to the
+package do not muck this up. However, this package is provided with no
+guarantee, and you should test the output yourself.
