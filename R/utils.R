@@ -12,6 +12,7 @@ setup_log <- function(logfile, verbose, outdir) {
   logger::log_layout(logger::layout_glue_colors)
   if (verbose) {
     logger::log_threshold("INFO")
+    logger::log_errors()
   } else {
     logger::log_threshold("FATAL")
   }
@@ -34,9 +35,8 @@ setup_log <- function(logfile, verbose, outdir) {
     logger::log_layout(logger::layout_simple, index = 2)
     logger::log_appender(logger::appender_file(logfile), index = 2)
     logger::log_success("Log file created")
+    logger::log_errors()
   }
-
-  logger::log_errors()
 }
 
 
