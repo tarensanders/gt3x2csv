@@ -37,6 +37,7 @@ gt3x_2_csv <- function(gt3x_files,
                        verbose = FALSE,
                        recursive = TRUE,
                        actilife = FALSE) {
+  start_proc_time <- Sys.time()
   setup_log(logfile, verbose, outdir)
 
   proc_type <- check_file_input(gt3x_files)
@@ -59,7 +60,7 @@ gt3x_2_csv <- function(gt3x_files,
   outfiles <- generate_outputfiles(gt3x_files, outdir)
 
   # Setup processing backend
-  if (is.null(cores)){
+  if (is.null(cores)) {
     cores <- min(length(gt3x_files), parallel::detectCores() - 1)
   }
 
@@ -120,7 +121,6 @@ gt3x_2_csv <- function(gt3x_files,
 
   # Process the files
   i <- 1
-  start_loop <- Sys.time()
   foreach::foreach(
     i = seq_len(length(gt3x_files)),
     .inorder = FALSE,
@@ -135,14 +135,14 @@ gt3x_2_csv <- function(gt3x_files,
   if (progress) {
     close(bar)
   }
-  loop_comp <- difftime(Sys.time(),start_loop)
-  loop_comp_time <- round(as.numeric(loop_comp), 2)
-  loop_comp_units <- attr(loop_comp, "units")
+  comp <- difftime(Sys.time(), start_proc_time)
+  comp_time <- round(as.numeric(comp), 2)
+  comp_units <- attr(comp, "units")
   msg <- glue::glue("Finished processing {crayon::blue(length(gt3x_files))} ",
-                    "files in {crayon::blue(loop_comp_time, loop_comp_units)}")
+                    "files in {crayon::blue(comp_time, comp_units)}")
   logger::log_success(msg)
-
 }
+utils::globalVariables(c("comp_time", "comp_units"))
 
 #' Convert a Single GT3X File
 #'
@@ -163,9 +163,9 @@ convert_file <- function(gt3x_file, outfile, actilife = FALSE) {
   logger::log_trace(msg)
   logger::log_info()
   file_start <- Sys.time()
-  gt3x_file_read <- read.gt3x::read.gt3x(gt3x_file)
-  gt3x2csv:::save_header(gt3x_file_read, outfile, actilife)
-  gt3x2csv:::save_accel(gt3x_file_read, outfile)
+  gt3x_file_read <- read.gt3x::read.gt3x(gt3x_file, imputeZeroes = TRUE)
+  save_header(gt3x_file_read, outfile, actilife)
+  save_accel(gt3x_file_read, outfile)
 
   comp_time <- round(
     as.numeric(difftime(Sys.time(),
@@ -221,14 +221,14 @@ save_header <- function(gt3x_file,
   start_date <- format(start_date_unfmt, "%d/%m/%Y")
   dwnld_time <- format(dwnld_date_unfmt, format = "%H:%M:%S")
   dwnld_date <- format(dwnld_date_unfmt, "%d/%m/%Y")
-  batt_volt <- gsub(",","", header$`Battery Voltage`)
+  batt_volt <- gsub(",", "", header$`Battery Voltage`)
   firmware <- header$Firmware
 
   # Header Text -------------------------------------
   header_txt <-
     # nolint start
     glue::glue(
-      "------------ Data File Created By ActiGraph GT3X+ {actilife} Firmware v{firmware} date format dd/MM/yyyy at {sample_rate} Hz  Filter Normal -----------\n",
+      "------------ Data File Created By ActiGraph GT3X+ {actilife} Firmware v{firmware} date format d/MM/yyyy at {sample_rate} Hz  Filter Normal -----------\n",
       "Serial Number: {serial_num}\n",
       "Start Time {start_time}\n",
       "Start Date {start_date}\n",
@@ -257,9 +257,7 @@ utils::globalVariables(c("sample_rate", "serial_num", "start_time",
 #' @return Nothing
 save_accel <- function(gt3x_file, outfile) {
   outdata <- data.table::as.data.table(gt3x_file)
-  outdata <- setNames(outdata, c("Accelerometer X",
-                                 "Accelerometer Y",
-                                 "Accelerometer Z"))
+  names(outdata) <- c("Accelerometer X", "Accelerometer Y", "Accelerometer Z")
 
   logger::log_trace("Writing activity to CSV")
   vroom::vroom_write(outdata,

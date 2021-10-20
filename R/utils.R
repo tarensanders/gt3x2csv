@@ -72,7 +72,7 @@ check_file_input <- function(gt3x_files) {
   return(proc_type)
 }
 
-#' Check the GT3X files are Valid
+#' Check the GT3X Files are Valid
 #'
 #' Validates GT3X files using `read.gt3x::have_log_and_info`. Not intended to be
 #' called by users.

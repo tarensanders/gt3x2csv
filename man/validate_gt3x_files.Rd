@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{validate_gt3x_files}
 \alias{validate_gt3x_files}
-\title{Check the GT3X files are Valid}
+\title{Check the GT3X Files are Valid}
 \usage{
 validate_gt3x_files(gt3x_files, proc_type)
 }

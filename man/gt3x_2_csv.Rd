@@ -9,7 +9,7 @@ gt3x_2_csv(
   outdir = NULL,
   progress = FALSE,
   parallel = TRUE,
-  cores = parallel::detectCores() - 1,
+  cores = NULL,
   logfile = FALSE,
   verbose = FALSE,
   recursive = TRUE,
@@ -27,7 +27,9 @@ the files are saved in the same directory as the original files.}
 
 \item{parallel}{Use a parallel backend. Defaults to TRUE.}
 
-\item{cores}{If \code{parallel == TRUE}, how many cores are used for processing.}
+\item{cores}{If \code{parallel == TRUE}, how many cores are used for processing.
+By default this is the smaller of the number of cores available minus 1, or
+the number of files to process.}
 
 \item{logfile}{create a log file for debugging. Can be one of \code{FALSE}
 (default; do not create a file), \code{TRUE} (create the log file at the default
