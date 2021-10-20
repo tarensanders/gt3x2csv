@@ -156,3 +156,19 @@ generate_outputfiles <- function(gt3x_files, outdir = NULL) {
   }
   return(out_paths)
 }
+
+
+#' Alternative Rounding
+#'
+#' @param x The number to round (or vector, or data.frame)
+#' @param n The number of digits to round to.
+#'
+#' @return A vector of rounded numbers
+round2 <-  function(x, n = 0) {
+  posneg = sign(x)
+  z = abs(x)*10^n
+  z = z + 0.5 + sqrt(.Machine$double.eps)
+  z = trunc(z)
+  z = z/10^n
+  z*posneg
+}

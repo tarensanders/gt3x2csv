@@ -163,7 +163,9 @@ convert_file <- function(gt3x_file, outfile, actilife = FALSE) {
   logger::log_trace(msg)
   logger::log_info()
   file_start <- Sys.time()
-  gt3x_file_read <- read.gt3x::read.gt3x(gt3x_file, imputeZeroes = TRUE)
+  gt3x_file_read <- AGread::read_gt3x(gt3x_file, parser = "dev",
+                                      include = c("METADATA", "PARAMETERS",
+                                                  "SENSOR_SCHEMA", "ACTIVITY2"))
   save_header(gt3x_file_read, outfile, actilife)
   save_accel(gt3x_file_read, outfile)
 
@@ -193,7 +195,7 @@ convert_file <- function(gt3x_file, outfile, actilife = FALSE) {
 #' Reads information from the 'info.txt' file and writes it in the expected
 #' format to a CSV file. Not intended to be called directly.
 #'
-#' @param gt3x_file An object read using `read.gt3x::read.gt3x()`
+#' @param gt3x_file An object read using `AGread::read_gt3x()`
 #' @param outfile The path to save the resulting CSV file
 #' @param actilife The version string for the header. By default, this is
 #' "gt3x2csv v0.2.0". If your analysis depends on knowing an Actilife version,
@@ -211,18 +213,18 @@ save_header <- function(gt3x_file,
     )
   }
   logger::log_trace("Getting header information")
-  header <- attr(gt3x_file, "header")
-  start_date_unfmt <- header$`Start Date`
-  dwnld_date_unfmt <- header$`Download Date`
+  info <- gt3x_file$info
+  start_date_unfmt <- info$Start_Date
+  dwnld_date_unfmt <- info$Last_Sample_Time
 
-  sample_rate <- attr(gt3x_file, "sample_rate")
-  serial_num <- header$`Serial Number`
+  sample_rate <- info$Sample_Rate
+  serial_num <- info$Serial_Number
   start_time <- format(start_date_unfmt, format = "%H:%M:%S")
   start_date <- format(start_date_unfmt, "%d/%m/%Y")
   dwnld_time <- format(dwnld_date_unfmt, format = "%H:%M:%S")
   dwnld_date <- format(dwnld_date_unfmt, "%d/%m/%Y")
-  batt_volt <- gsub(",", "", header$`Battery Voltage`)
-  firmware <- header$Firmware
+  batt_volt <- info$Battery_Voltage
+  firmware <- info$Firmware
 
   # Header Text -------------------------------------
   header_txt <-
@@ -251,12 +253,17 @@ utils::globalVariables(c("sample_rate", "serial_num", "start_time",
 #'
 #' Write the activity data to a CSV file. Not intended to be called directly.
 #'
-#' @param gt3x_file An object read using `read.gt3x::read.gt3x()`
+#' @param gt3x_file An object read using `AGread::read_gt3x()`
 #' @param outfile The path to save the resulting CSV file
 #'
 #' @return Nothing
 save_accel <- function(gt3x_file, outfile) {
-  outdata <- data.table::as.data.table(gt3x_file)
+  outdata <- gt3x_file$RAW
+  # Remove timestamp
+  outdata <- outdata[,2:4]
+
+  # Round to match ActiLife
+  outdata <- round2(outdata, 3)
   names(outdata) <- c("Accelerometer X", "Accelerometer Y", "Accelerometer Z")
 
   logger::log_trace("Writing activity to CSV")

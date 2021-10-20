@@ -7,7 +7,7 @@
 save_accel(gt3x_file, outfile)
 }
 \arguments{
-\item{gt3x_file}{An object read using \code{read.gt3x::read.gt3x()}}
+\item{gt3x_file}{An object read using \code{AGread::read_gt3x()}}
 
 \item{outfile}{The path to save the resulting CSV file}
 }

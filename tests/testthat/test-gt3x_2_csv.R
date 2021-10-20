@@ -13,7 +13,9 @@ test_that("save_header() matches a known good output", {
   # Process the same file in gt3x2csv
   actilife_ver <- "ActiLife v6.11.9"
   gt3x_file <- list_gt3x_rec(dir)
-  read_gt3x_file <- read.gt3x::read.gt3x(gt3x_file)
+  read_gt3x_file <- AGread::read_gt3x(gt3x_file, parser = "dev",
+                                      include = c("METADATA", "PARAMETERS",
+                                                  "SENSOR_SCHEMA", "ACTIVITY2"))
 
   outfile <- file.path(dir, "test_header.csv")
 
@@ -39,7 +41,9 @@ test_that("save_accel() matches a known good output", {
 
   # Process the same file in gt3x2csv
   gt3x_file <- list_gt3x_rec(dir)
-  read_gt3x_file <- read.gt3x::read.gt3x(gt3x_file, imputeZeroes = TRUE)
+  read_gt3x_file <- AGread::read_gt3x(gt3x_file, parser = "dev",
+                                      include = c("METADATA", "PARAMETERS",
+                                                  "SENSOR_SCHEMA", "ACTIVITY2"))
 
   outfile <- file.path(dir, "test_accel.csv")
 
@@ -60,3 +64,4 @@ test_that("save_accel() matches a known good output", {
   expect_identical(sum(test_accel[,3]), sum(acti_file[,3]))
 
 })
+
