@@ -4,6 +4,8 @@
 # gt3x2csv
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/tarensanders/gt3x2csv/workflows/R-CMD-check/badge.svg)](https://github.com/tarensanders/gt3x2csv/actions)
 <!-- badges: end -->
 
 The goal of gt3x2csv is to convert .gt3x files into (raw) csv files so
