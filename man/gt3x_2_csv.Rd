@@ -49,5 +49,5 @@ you can provide one here.}
 Nothing. Files are saved as a side effect.
 }
 \description{
-TODO ADD DESCRIPTION
+Convert a GT3X file to the raw CSV format provided by ActiLife.
 }

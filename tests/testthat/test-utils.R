@@ -71,13 +71,3 @@ test_that("generate_outputfiles() creates outputs in correct dir", {
   )
   expect_equal(length(grep("RAW.csv$", outfiles)), length(infiles))
 })
-
-test_that("round2() rounds up not down", {
-  expect_identical(round2(0), 0)
-  expect_identical(round2(1), 1)
-  expect_identical(round2(0.3), 0)
-  expect_identical(round2(0.7), 1)
-  expect_identical(round2(0.5), 1)
-  expect_identical(round2(0.15, 1), 0.2)
-  expect_identical(round2(0.06250001, 3), 0.063)
-})

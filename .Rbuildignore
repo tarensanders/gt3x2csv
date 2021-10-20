@@ -2,3 +2,7 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^README\.Rmd$
+^tests/testthat/large_tests/large_actilife\.csv$
+^tests/testthat/large_tests/large_file\.gt3x$
+^tests/testthat/large_tests/medium_actilife\.csv$
+^tests/testthat/large_tests/medium_file\.gt3x$

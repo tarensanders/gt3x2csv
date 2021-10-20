@@ -4,7 +4,7 @@ local_dir_with_files <- function(dir = tempfile(),
                                  env = parent.frame()) {
   dir.create(dir)
 
-  withr::defer({unlink(dir, recursive = TRUE)}, envir = env)
+  withr::defer(unlink(dir, recursive = TRUE), envir = env)
 
 
   # Add example files
@@ -34,7 +34,7 @@ read_proc_csv <- function(path,
                           env = parent.frame()) {
   withr::defer(
     Sys.setenv(`_R_S3_METHOD_REGISTRATION_NOTE_OVERWRITES_` = "false"),
-               env=env)
+               env = env)
   Sys.setenv(`_R_S3_METHOD_REGISTRATION_NOTE_OVERWRITES_` = "false")
 
   if (header) header <- readr::read_lines(path, n_max = 10)

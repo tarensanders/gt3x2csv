@@ -157,18 +157,26 @@ generate_outputfiles <- function(gt3x_files, outdir = NULL) {
   return(out_paths)
 }
 
+impute_missing <- function(dt, missing, start_num, sample_rate){
+  if (is.null(missing)){
+    # Do nothing
+    return(dt)
+  }
 
-#' Alternative Rounding
-#'
-#' @param x The number to round (or vector, or data.frame)
-#' @param n The number of digits to round to.
-#'
-#' @return A vector of rounded numbers
-round2 <-  function(x, n = 0) {
-  posneg = sign(x)
-  z = abs(x)*10^n
-  z = z + 0.5 + sqrt(.Machine$double.eps)
-  z = trunc(z)
-  z = z/10^n
-  z*posneg
+  for (i in rev(seq_len(nrow(missing)))) {
+    miss_row <- missing[i,]
+
+    miss_row_start <-
+      (as.numeric(row.names(miss_row)) - start_num) * sample_rate
+
+    miss_row_end <- miss_row_start+miss_row[,"n_missing"]
+    vm <- sqrt(dt[miss_row_start,1]^2 +
+                 dt[miss_row_start,2]^2 +
+                 dt[miss_row_start,3]^2)
+
+    if (round(vm,4) < 1.0276){
+    dt[(miss_row_start+1):miss_row_end,] <- dt[miss_row_start,]
+    }
+  }
+  return(dt)
 }
