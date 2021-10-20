@@ -259,7 +259,7 @@ save_accel <- function(gt3x_file, outfile) {
   outdata <- data.table::as.data.table(gt3x_file)
   missing <- attr(gt3x_file, "missingness")
   start_num <- attr(gt3x_file, "start_time_param")
-  sample_rate <- attr(gt3x_file,"sample_rate")
+  sample_rate <- attr(gt3x_file, "sample_rate")
 
 
   outdata <- impute_missing(outdata, missing, start_num, sample_rate)
