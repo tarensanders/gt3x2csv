@@ -27,7 +27,7 @@ Paula Santos ([@danilodpsantos](https://github.com/danilodpsantos)).
 gt3x2csv has a number of advantages over converting files in ActiLife.
 Firstly, it is substantially faster both on a per-file basis, and
 overall. This is largely thanks to the great work on the
-[`AGread`](https://github.com/paulhibbing/AGread)) package, which uses
+[`read.gt3x`](https://github.com/THLfi/read.gt3x)) package, which uses
 C++ to read the activity data quickly. gt3x2csv is further bolsted by
 being able to process files in parallel something not available on
 ActiLife.
@@ -48,7 +48,7 @@ Using ActiLife v6.11.9 (newer versions might be faster.<br>
 
 ## What does gt3x2csv do?
 
-gt3x2csv uses [`AGread`](https://github.com/paulhibbing/AGread) to
+gt3x2csv uses [`read.gt3x`](https://github.com/THLfi/read.gt3x) to
 unpack the GT3X file, and formats the output in the same way as
 ActiLife.
 
@@ -117,7 +117,7 @@ and their compressed/uncompressed sizes.
 All this is to say that if you can do your analysis without saving CSV
 files in the middle (e.g., using
 [`read.gt3x`](https://github.com/THLfi/read.gt3x) or
-[`AGread`](https://github.com/paulhibbing/AGread)), that would be
+[`read.gt3x`](https://github.com/THLfi/read.gt3x)), that would be
 better. But, some processing packages (e.g.,
 [`GGIR`](https://github.com/wadpac/GGIR)) don’t allow this since (for
 good reasons).

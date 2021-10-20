@@ -29,7 +29,7 @@ This package is a rewrite of a package previously written by Danilo de Paula San
 
 ## Why use gt3x2csv instead of ActiLife?
 
-gt3x2csv has a number of advantages over converting files in ActiLife. Firstly, it is substantially faster both on a per-file basis, and overall. This is largely thanks to the great work on the [`AGread`](https://github.com/paulhibbing/AGread)) package, which uses C++ to read the activity data quickly. gt3x2csv is further bolsted by being able to process files in parallel something not available on ActiLife.
+gt3x2csv has a number of advantages over converting files in ActiLife. Firstly, it is substantially faster both on a per-file basis, and overall. This is largely thanks to the great work on the [`read.gt3x`](https://github.com/THLfi/read.gt3x)) package, which uses C++ to read the activity data quickly. gt3x2csv is further bolsted by being able to process files in parallel something not available on ActiLife.
 
 As an example of how much faster it is, see the table below. 
 
@@ -46,7 +46,7 @@ Method | One File | Five Files | Thirty Files<sup>[1](#myfootnote1)</sup>
 
 ## What does gt3x2csv do?
 
-gt3x2csv uses [`AGread`](https://github.com/paulhibbing/AGread) to unpack the GT3X file, and formats the output in the same way as ActiLife.
+gt3x2csv uses [`read.gt3x`](https://github.com/THLfi/read.gt3x) to unpack the GT3X file, and formats the output in the same way as ActiLife.
 
 ## Installation
 
@@ -109,7 +109,7 @@ File | GT3X Size | CSV Size | Times Larger
 **File 2** | 159MB | 524MB | ~3.3
 **File 3** | 352MB | 1.13GB | ~3.3
 
-All this is to say that if you can do your analysis without saving CSV files in the middle (e.g., using [`read.gt3x`](https://github.com/THLfi/read.gt3x) or [`AGread`](https://github.com/paulhibbing/AGread)), that would be better. But, some processing packages (e.g., [`GGIR`](https://github.com/wadpac/GGIR)) don't allow this since (for good reasons).
+All this is to say that if you can do your analysis without saving CSV files in the middle (e.g., using [`read.gt3x`](https://github.com/THLfi/read.gt3x) or [`read.gt3x`](https://github.com/THLfi/read.gt3x)), that would be better. But, some processing packages (e.g., [`GGIR`](https://github.com/wadpac/GGIR)) don't allow this since (for good reasons).
 
 ### Memory Use
 
