@@ -72,6 +72,7 @@ place as the originals. Here is an example:
 ``` r
 library(gt3x2csv)
 
+# Setting up a test directory - ignore this.
 my_directory <- gt3x2csv:::local_dir_with_files()
 
 # An example directory with some GT3X files
