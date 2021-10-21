@@ -100,70 +100,136 @@ test_that("gt3x_2_csv() can run as per example", {
 })
 
 
-test_that("convert_file() works on larger files", {
+# Tests on larger files --------------------------------------------------------
+
+test_that("convert_file() works on 30hz small file", {
   skip_on_ci()
   skip_on_cran()
-  skip_if(!file.exists(test_path("large_tests", "medium_file.gt3x")))
-  skip_if(!file.exists(test_path("large_tests", "large_file.gt3x")))
+  skip_if(!file.exists(test_path("large_tests", "small_file.gt3x")))
 
   dir <- local_dir_with_files(num_files = 0)
 
   # Read in the 'known good' files
-  acti_medium_file <- read_proc_csv(test_path("large_tests",
-                                              "medium_actilife.csv"),
-    header = TRUE,
-    accel_data = TRUE
-  )
-  acti_large_file <- read_proc_csv(test_path("large_tests",
-                                             "large_actilife.csv"),
+  acti_file <- read_proc_csv(test_path("large_tests", "small_actilife.csv"),
     header = TRUE,
     accel_data = TRUE
   )
 
   # Process the same file in gt3x2csv
   actilife_ver <- "ActiLife v6.11.9"
-  gt3x_file_medium <- test_path("large_tests", "medium_file.gt3x")
-  gt3x_file_large <- test_path("large_tests", "large_file.gt3x")
+  gt3x_file <- test_path("large_tests", "small_file.gt3x")
 
-  outfile_medium <- file.path(dir, "test_medium.csv")
-  outfile_large <- file.path(dir, "test_large.csv")
+  outfile <- file.path(dir, "test_small.csv")
 
-  # Test the medium file
   expect_error(
-    convert_file(gt3x_file_medium, outfile_medium, actilife = actilife_ver),
+    convert_file(gt3x_file, outfile, actilife = actilife_ver),
     NA)
 
-  test_medium <- read_proc_csv(outfile_medium, header = TRUE, accel_data = TRUE)
+  test_file <- read_proc_csv(outfile, header = TRUE, accel_data = TRUE)
 
   # Check the header
-  expect_equal(test_medium$header, acti_medium_file$header)
+  expect_equal(test_file$header, acti_file$header)
   # Check the accel data
-  expect_equal(dim(test_medium$accel_data), dim(acti_medium_file$accel_data))
-  expect_equal(names(test_medium$accel_data),
-               names(acti_medium_file$accel_data))
-  expect_identical(sum(test_medium$accel_data[, 1]),
-                   sum(acti_medium_file$accel_data[, 1]))
-  expect_identical(sum(test_medium$accel_data[, 2]),
-                   sum(acti_medium_file$accel_data[, 2]))
-  expect_identical(sum(test_medium$accel_data[, 3]),
-                   sum(acti_medium_file$accel_data[, 3]))
+  expect_equal(dim(test_file$accel_data),
+               dim(acti_file$accel_data))
 
-  # Test the large file
+  expect_equal(names(test_file$accel_data),
+               names(acti_file$accel_data))
+
+  expect_identical(sum(test_file$accel_data[, 1]),
+                   sum(acti_file$accel_data[, 1]))
+
+  expect_identical(sum(test_file$accel_data[, 2]),
+                   sum(acti_file$accel_data[, 2]))
+
+  expect_identical(sum(test_file$accel_data[, 3]),
+                   sum(acti_file$accel_data[, 3]))
+})
+
+test_that("convert_file() works on 100hz medium file", {
+  skip_on_ci()
+  skip_on_cran()
+  skip_if(!file.exists(test_path("large_tests", "medium_file.gt3x")))
+
+  dir <- local_dir_with_files(num_files = 0)
+
+  # Read in the 'known good' files
+  acti_file <- read_proc_csv(test_path("large_tests", "medium_actilife.csv"),
+                             header = TRUE,
+                             accel_data = TRUE
+  )
+
+  # Process the same file in gt3x2csv
+  actilife_ver <- "ActiLife v6.11.9"
+  gt3x_file <- test_path("large_tests", "medium_file.gt3x")
+
+  outfile <- file.path(dir, "test_medium.csv")
+
   expect_error(
-    convert_file(gt3x_file_large, outfile_large, actilife = actilife_ver),
+    convert_file(gt3x_file, outfile, actilife = actilife_ver),
     NA)
 
-  test_large <- read_proc_csv(outfile_large, header = TRUE, accel_data = TRUE)
+  test_file <- read_proc_csv(outfile, header = TRUE, accel_data = TRUE)
 
   # Check the header
-  expect_equal(test_large$header, acti_large_file$header)
+  expect_equal(test_file$header, acti_file$header)
   # Check the accel data
-  expect_equal(dim(test_large$accel_data), dim(acti_large_file$accel_data))
-  expect_equal(names(test_large$accel_data), names(acti_large_file$accel_data))
-  expect_identical(sum(test_large$accel_data[, 1]),
-                   sum(acti_large_file$accel_data[, 1]))
-  expect_identical(sum(test_large$accel_data[, 2]),
-                   sum(acti_large_file$accel_data[, 2]))
-  expect_identical(sum(test_large$accel_data[, 3]),
-                   sum(acti_large_file$accel_data[, 3]))
+  expect_equal(dim(test_file$accel_data),
+               dim(acti_file$accel_data))
+
+  expect_equal(names(test_file$accel_data),
+               names(acti_file$accel_data))
+
+  expect_identical(sum(test_file$accel_data[, 1]),
+                   sum(acti_file$accel_data[, 1]))
+
+  expect_identical(sum(test_file$accel_data[, 2]),
+                   sum(acti_file$accel_data[, 2]))
+
+  expect_identical(sum(test_file$accel_data[, 3]),
+                   sum(acti_file$accel_data[, 3]))
+})
+
+test_that("convert_file() works on 100hz large file", {
+  skip_on_ci()
+  skip_on_cran()
+  skip_if(!file.exists(test_path("large_tests", "large_file.gt3x")))
+
+  dir <- local_dir_with_files(num_files = 0)
+
+  # Read in the 'known good' files
+  acti_file <- read_proc_csv(test_path("large_tests", "large_actilife.csv"),
+                             header = TRUE,
+                             accel_data = TRUE
+  )
+
+  # Process the same file in gt3x2csv
+  actilife_ver <- "ActiLife v6.11.9"
+  gt3x_file <- test_path("large_tests", "large_file.gt3x")
+
+  outfile <- file.path(dir, "test_large.csv")
+
+  expect_error(
+    convert_file(gt3x_file, outfile, actilife = actilife_ver),
+    NA)
+
+  test_file <- read_proc_csv(outfile, header = TRUE, accel_data = TRUE)
+
+  # Check the header
+  expect_equal(test_file$header, acti_file$header)
+  # Check the accel data
+  expect_equal(dim(test_file$accel_data),
+               dim(acti_file$accel_data))
+
+  expect_equal(names(test_file$accel_data),
+               names(acti_file$accel_data))
+
+  expect_identical(sum(test_file$accel_data[, 1]),
+                   sum(acti_file$accel_data[, 1]))
+
+  expect_identical(sum(test_file$accel_data[, 2]),
+                   sum(acti_file$accel_data[, 2]))
+
+  expect_identical(sum(test_file$accel_data[, 3]),
+                   sum(acti_file$accel_data[, 3]))
 })
