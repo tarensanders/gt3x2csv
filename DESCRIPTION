@@ -11,7 +11,9 @@ Authors@R:
            family = "de Paula",
            role = c("aut"),
            email = "danilodpsantos@gmail.com"))
-Description: Converts Actigraph extracted GT3x files to csv files, making it possible to use raw accelerometry data into open source softwares like GGIR R package.
+Description: Converts Actigraph extracted GT3x files to csv files, making it possible to use raw accelerometry data in open source analysis methods like the GGIR package.
+URL: https://github.com/tarensanders/gt3x2csv
+BugReports: https://github.com/tarensanders/gt3x2csv/issues
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
