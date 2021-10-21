@@ -1,16 +1,15 @@
-local_dir_with_files <- function(dir = tempfile(),
+local_dir_with_files <- function(dir = fs::file_temp(),
                                  num_files = 5,
                                  inc_good = FALSE,
                                  env = parent.frame()) {
-  dir.create(dir)
+  fs::dir_create(dir)
 
-  withr::defer(unlink(dir, recursive = TRUE), envir = env)
-
+  withr::defer(fs::dir_delete(dir), envir = env)
 
   # Add example files
   if (num_files > 0) {
     for (i in seq_len(num_files)) {
-      file.copy(
+      fs::file_copy(
         testthat::test_path("examples", "test_file.gt3x"),
         file.path(dir, paste0("test_file", i, ".gt3x"))
       )
@@ -19,7 +18,7 @@ local_dir_with_files <- function(dir = tempfile(),
 
   # Add 'known good' file
   if (inc_good) {
-    file.copy(
+    fs::file_copy(
       testthat::test_path("examples", "actilife_file.csv"),
       file.path(dir, "actilife_file.csv")
     )
@@ -33,8 +32,9 @@ read_proc_csv <- function(path,
                           accel_data = TRUE,
                           env = parent.frame()) {
   withr::defer(
-    Sys.setenv(`_R_S3_METHOD_REGISTRATION_NOTE_OVERWRITES_` = "false"),
+    Sys.setenv(`_R_S3_METHOD_REGISTRATION_NOTE_OVERWRITES_` = ""),
                env = env)
+
   Sys.setenv(`_R_S3_METHOD_REGISTRATION_NOTE_OVERWRITES_` = "false")
 
   if (header) header <- readr::read_lines(path, n_max = 10)
