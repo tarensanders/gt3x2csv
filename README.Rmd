@@ -109,7 +109,7 @@ File | GT3X Size | CSV Size | Times Larger
 **File 2** | 159MB | 524MB | ~3.3
 **File 3** | 352MB | 1.13GB | ~3.3
 
-All this is to say that if you can do your analysis without saving CSV files in the middle (e.g., using [`read.gt3x`](https://github.com/THLfi/read.gt3x) or [`read.gt3x`](https://github.com/THLfi/read.gt3x)), that would be better. But, some processing packages (e.g., [`GGIR`](https://github.com/wadpac/GGIR)) don't allow this (mostly due to memory issues).
+All this is to say that if you can do your analysis without saving CSV files in the middle (e.g., using [`read.gt3x`](https://github.com/THLfi/read.gt3x) or [`AGread`](https://github.com/paulhibbing/AGread)), that would be better. But, some processing packages (e.g., [`GGIR`](https://github.com/wadpac/GGIR)) don't allow this (mostly due to memory issues).
 
 ### Memory Use
 

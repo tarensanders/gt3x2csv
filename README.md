@@ -117,7 +117,7 @@ and their compressed/uncompressed sizes.
 All this is to say that if you can do your analysis without saving CSV
 files in the middle (e.g., using
 [`read.gt3x`](https://github.com/THLfi/read.gt3x) or
-[`read.gt3x`](https://github.com/THLfi/read.gt3x)), that would be
+[`AGread`](https://github.com/paulhibbing/AGread)), that would be
 better. But, some processing packages (e.g.,
 [`GGIR`](https://github.com/wadpac/GGIR)) don’t allow this (mostly due
 to memory issues).
