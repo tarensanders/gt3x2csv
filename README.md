@@ -27,9 +27,9 @@ Paula Santos ([@danilodpsantos](https://github.com/danilodpsantos)).
 gt3x2csv has a number of advantages over converting files in ActiLife.
 Firstly, it is substantially faster both on a per-file basis, and
 overall. This is largely thanks to the great work on the
-[`read.gt3x`](https://github.com/THLfi/read.gt3x)) package, which uses
+[`read.gt3x`](https://github.com/THLfi/read.gt3x) package, which uses
 C++ to read the activity data quickly. gt3x2csv is further bolsted by
-being able to process files in parallel something not available on
+being able to process files in parallel, something not available on
 ActiLife.
 
 As an example of how much faster it is, see the table below.
@@ -94,7 +94,7 @@ list.files(my_directory)
 #> [10] "test_file5RAW.csv"
 ```
 
-# Caveat Emptor
+## Caveat Emptor
 
 A few warnings for those using gt3x2csv.
 
