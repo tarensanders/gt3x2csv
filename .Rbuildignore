@@ -6,4 +6,6 @@
 ^tests/testthat/large_tests/large_file\.gt3x$
 ^tests/testthat/large_tests/medium_actilife\.csv$
 ^tests/testthat/large_tests/medium_file\.gt3x$
+^tests/testthat/large_tests/small_actilife\.csv$
+^tests/testthat/large_tests/small_file\.gt3x$
 ^\.github$

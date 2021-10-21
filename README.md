@@ -38,7 +38,7 @@ As an example of how much faster it is, see the table below.
 |-----------------------------------------------------------------|----------|------------|------------------------------------------|
 | **Actilife<sup>[2](#myfootnote2)</sup>**                        | 58s      | 4min 55s   | 29min 20s                                |
 | **gt3x2csv<sup>[3](#myfootnote3)</sup><sub>(Sequential)</sub>** | 8s       | 40s        | 4mins                                    |
-| **gt3x2csv<sub>(Parallel)</sub>**                               | 9s       | 16s        | 3mins                                    |
+| **gt3x2csv<sub>(Parallel)</sub>**                               | 8s       | 14s        | 1min 42s                                 |
 
 <a name="myfootnote1"><sup>1</sup></a> All files were 159MB, or a little
 over three days of data.<br> <a name="myfootnote2"><sup>2</sup></a>
@@ -119,15 +119,17 @@ files in the middle (e.g., using
 [`read.gt3x`](https://github.com/THLfi/read.gt3x) or
 [`read.gt3x`](https://github.com/THLfi/read.gt3x)), that would be
 better. But, some processing packages (e.g.,
-[`GGIR`](https://github.com/wadpac/GGIR)) don’t allow this since (for
-good reasons).
+[`GGIR`](https://github.com/wadpac/GGIR)) don’t allow this (mostly due
+to memory issues).
 
 ### Memory Use
 
 In the process of unzipping the files, the data are temporarily stored
 in memory. If you run gt3x2csv in parallel with lots of cores, you might
 run out of memory. If this happens, just set `cores` to be a lower
-value.
+value. For example, using all 16 threads on my 8 core CPU was actually
+slower to process 30 files than setting `cores = 8` and using 8 threads,
+because the 32GB of RAM was being exhausted.
 
 ### Differences to ActiLife
 
