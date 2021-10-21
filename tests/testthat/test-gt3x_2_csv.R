@@ -50,7 +50,7 @@ test_that("save_accel() matches a known good output", {
     NA
   )
 
-  test_accel <- readr::read_csv(outfile, show_col_types = FALSE)
+  test_accel <- readr::read_csv(outfile, show_col_types = FALSE, lazy = FALSE)
 
   # Too slow to compare the full data frame
   expect_equal(dim(test_accel), dim(acti_file))

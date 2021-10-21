@@ -37,10 +37,15 @@ read_proc_csv <- function(path,
 
   Sys.setenv(`_R_S3_METHOD_REGISTRATION_NOTE_OVERWRITES_` = "false")
 
-  if (header) header <- readr::read_lines(path, n_max = 10)
-  if (accel_data) accel_data <- suppressWarnings(readr::read_csv(path,
-                                                                 skip = 10,
-                                                show_col_types = FALSE))
+  if (header) header <- readr::read_lines(path, n_max = 10, lazy = FALSE)
+  if (accel_data) {
+    accel_data <- suppressWarnings(readr::read_csv(
+      path,
+      skip = 10,
+      show_col_types = FALSE,
+      lazy = FALSE
+    ))
+    }
 
   return(list(header = header, accel_data = accel_data))
 }
