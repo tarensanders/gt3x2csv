@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/tarensanders/gt3x2csv/workflows/R-CMD-check/badge.svg)](https://github.com/tarensanders/gt3x2csv/actions)
 <!-- badges: end -->
 
@@ -25,7 +27,7 @@ Paula Santos ([@danilodpsantos](https://github.com/danilodpsantos)).
 gt3x2csv has a number of advantages over converting files in ActiLife.
 Firstly, it is substantially faster both on a per-file basis, and
 overall. This is largely thanks to the great work on the
-[`AGread`](https://github.com/paulhibbing/AGread)) package, which uses
+[`read.gt3x`](https://github.com/THLfi/read.gt3x)) package, which uses
 C++ to read the activity data quickly. gt3x2csv is further bolsted by
 being able to process files in parallel something not available on
 ActiLife.
@@ -36,7 +38,7 @@ As an example of how much faster it is, see the table below.
 |-----------------------------------------------------------------|----------|------------|------------------------------------------|
 | **Actilife<sup>[2](#myfootnote2)</sup>**                        | 58s      | 4min 55s   | 29min 20s                                |
 | **gt3x2csv<sup>[3](#myfootnote3)</sup><sub>(Sequential)</sub>** | 8s       | 40s        | 4mins                                    |
-| **gt3x2csv<sub>(Parallel)</sub>**                               | 9s       | 16s        | 3mins                                    |
+| **gt3x2csv<sub>(Parallel)</sub>**                               | 8s       | 14s        | 1min 42s                                 |
 
 <a name="myfootnote1"><sup>1</sup></a> All files were 159MB, or a little
 over three days of data.<br> <a name="myfootnote2"><sup>2</sup></a>
@@ -46,7 +48,7 @@ Using ActiLife v6.11.9 (newer versions might be faster.<br>
 
 ## What does gt3x2csv do?
 
-gt3x2csv uses [`AGread`](https://github.com/paulhibbing/AGread) to
+gt3x2csv uses [`read.gt3x`](https://github.com/THLfi/read.gt3x) to
 unpack the GT3X file, and formats the output in the same way as
 ActiLife.
 
@@ -70,6 +72,7 @@ place as the originals. Here is an example:
 ``` r
 library(gt3x2csv)
 
+# Setting up a test directory - ignore this.
 my_directory <- gt3x2csv:::local_dir_with_files()
 
 # An example directory with some GT3X files
@@ -114,17 +117,19 @@ and their compressed/uncompressed sizes.
 All this is to say that if you can do your analysis without saving CSV
 files in the middle (e.g., using
 [`read.gt3x`](https://github.com/THLfi/read.gt3x) or
-[`AGread`](https://github.com/paulhibbing/AGread)), that would be
+[`read.gt3x`](https://github.com/THLfi/read.gt3x)), that would be
 better. But, some processing packages (e.g.,
-[`GGIR`](https://github.com/wadpac/GGIR)) don’t allow this since (for
-good reasons).
+[`GGIR`](https://github.com/wadpac/GGIR)) don’t allow this (mostly due
+to memory issues).
 
 ### Memory Use
 
 In the process of unzipping the files, the data are temporarily stored
 in memory. If you run gt3x2csv in parallel with lots of cores, you might
 run out of memory. If this happens, just set `cores` to be a lower
-value.
+value. For example, using all 16 threads on my 8 core CPU was actually
+slower to process 30 files than setting `cores = 8` and using 8 threads,
+because the 32GB of RAM was being exhausted.
 
 ### Differences to ActiLife
 

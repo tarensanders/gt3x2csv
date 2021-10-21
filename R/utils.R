@@ -174,8 +174,12 @@ impute_missing <- function(dt, missing, start_num, sample_rate) {
       dt[miss_row_start, 2]^2 +
       dt[miss_row_start, 3]^2)
 
-    if (round(vm, 4) < 1.0276) {
-      dt[(miss_row_start + 1):miss_row_end, ] <- dt[miss_row_start, ]
+
+  # TODO further validation of this eqn
+    vm_thresh <- round((16.071* (1/sample_rate)) + 0.8669, 4)
+
+    if (round(vm, 4) < vm_thresh) {
+      data.table::set(dt, (miss_row_start + 1):miss_row_end, (1:3), dt[miss_row_start, ])
     }
   }
   return(dt)

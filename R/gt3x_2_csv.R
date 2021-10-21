@@ -161,7 +161,6 @@ convert_file <- function(gt3x_file, outfile, actilife = FALSE) {
                     Output: {crayon::blue(outfile)}")
 
   logger::log_trace(msg)
-  logger::log_info()
   file_start <- Sys.time()
   gt3x_file_read <- read.gt3x::read.gt3x(gt3x_file, imputeZeroes = TRUE)
   save_header(gt3x_file_read, outfile, actilife)
