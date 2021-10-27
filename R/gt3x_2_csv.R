@@ -225,9 +225,9 @@ save_header <- function(gt3x_file,
   sample_rate <- attr(gt3x_file, "sample_rate")
   serial_num <- header$`Serial Number`
   start_time <- format(start_date_unfmt, format = "%H:%M:%S")
-  start_date <- format(start_date_unfmt, "%d/%m/%Y")
+  start_date <- gsub("^0", "", format(start_date_unfmt, "%d/%m/%Y"))
   dwnld_time <- format(dwnld_date_unfmt, format = "%H:%M:%S")
-  dwnld_date <- format(dwnld_date_unfmt, "%d/%m/%Y")
+  dwnld_date <- gsub("^0", "", format(dwnld_date_unfmt, "%d/%m/%Y"))
   batt_volt <- gsub(",", "", header$`Battery Voltage`)
   firmware <- header$Firmware
 
