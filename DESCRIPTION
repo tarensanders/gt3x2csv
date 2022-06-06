@@ -1,6 +1,6 @@
 Package: gt3x2csv
 Title: Converting actigraph's GT3X files to CSV files
-Version: 0.2.1.9000
+Version: 0.3.0
 Authors@R: 
     c(person(given = "Taren",
            family = "Sanders",
