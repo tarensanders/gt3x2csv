@@ -166,6 +166,8 @@ impute_missing <- function(dt, missing, start_num, sample_rate) {
   for (i in rev(seq_len(nrow(missing)))) {
     miss_row <- missing[i, ]
 
+    if (miss_row[, "n_missing"] == 0) next
+
     miss_row_start <-
       (as.numeric(row.names(miss_row)) - start_num) * sample_rate
 
