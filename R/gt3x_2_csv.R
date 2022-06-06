@@ -30,10 +30,10 @@
 #' @examples
 #' \dontrun{
 #' gt3x_2_csv(
-#'     gt3x_files = my_directory,
-#'     outdir = NULL, # Save to the same place
-#'     progress = FALSE, # Show a progress bar?
-#'     parallel = TRUE # Process files in parallel?
+#'   gt3x_files = my_directory,
+#'   outdir = NULL, # Save to the same place
+#'   progress = FALSE, # Show a progress bar?
+#'   parallel = TRUE # Process files in parallel?
 #' )
 #' }
 gt3x_2_csv <- function(gt3x_files,
@@ -77,7 +77,8 @@ gt3x_2_csv <- function(gt3x_files,
     foreach::registerDoSEQ()
   } else {
     logger::log_info(
-      "Setting up a parallel backend with {crayon::blue(cores)} cores")
+      "Setting up a parallel backend with {crayon::blue(cores)} cores"
+    )
     cl <- parallel::makeCluster(cores)
     doSNOW::registerDoSNOW(cl)
   }
@@ -146,8 +147,10 @@ gt3x_2_csv <- function(gt3x_files,
   comp <- difftime(Sys.time(), start_proc_time)
   comp_time <- round(as.numeric(comp), 2)
   comp_units <- attr(comp, "units")
-  msg <- glue::glue("Finished processing {crayon::blue(length(gt3x_files))} ",
-                    "files in {crayon::blue(comp_time, comp_units)}")
+  msg <- glue::glue(
+    "Finished processing {crayon::blue(length(gt3x_files))} ",
+    "files in {crayon::blue(comp_time, comp_units)}"
+  )
   logger::log_success(msg)
 }
 utils::globalVariables(c("comp_time", "comp_units"))
@@ -171,27 +174,35 @@ convert_file <- function(gt3x_file, outfile, actilife = FALSE) {
   logger::log_trace(msg)
   file_start <- Sys.time()
   gt3x_file_read <- read.gt3x::read.gt3x(gt3x_file, imputeZeroes = TRUE)
-  save_header(gt3x_file_read, outfile, actilife)
-  save_accel(gt3x_file_read, outfile)
+  if (attr(gt3x_file_read, "total_records") == 0) {
+    msg <- glue::glue(
+      "Cannot convert {crayon::blue(gt3x_file)}. ",
+      "File appears to be corrupt or empty"
+    )
+    logger::log_warn(msg)
+  } else {
+    save_header(gt3x_file_read, outfile, actilife)
+    save_accel(gt3x_file_read, outfile)
 
-  comp_time <- round(
-    as.numeric(difftime(Sys.time(),
-      file_start,
-      units = "secs"
-    )),
-    2
-  )
+    comp_time <- round(
+      as.numeric(difftime(Sys.time(),
+        file_start,
+        units = "secs"
+      )),
+      2
+    )
 
-  fsize <- format(structure(file.size(outfile),
-    class = "object_size"
-  ), units = "auto", standard = "SI")
+    fsize <- format(structure(file.size(outfile),
+      class = "object_size"
+    ), units = "auto", standard = "SI")
 
-  msg <- glue::glue(
-    "Completed conversion of {crayon::blue(gt3x_file)} in ",
-    "{crayon::blue(comp_time)} seconds. ",
-    "Approx file size: {crayon::blue(fsize)}."
-  )
-  logger::log_success(msg)
+    msg <- glue::glue(
+      "Completed conversion of {crayon::blue(gt3x_file)} in ",
+      "{crayon::blue(comp_time)} seconds. ",
+      "Approx file size: {crayon::blue(fsize)}."
+    )
+    logger::log_success(msg)
+  }
 }
 
 
@@ -250,9 +261,11 @@ save_header <- function(gt3x_file,
   logger::log_trace("Writing header to CSV")
   cat(header_txt, file = outfile)
 }
-utils::globalVariables(c("sample_rate", "serial_num", "start_time",
-                         "start_date", "dwnld_time", "dwnld_date", "batt_volt",
-                         "firmware"))
+utils::globalVariables(c(
+  "sample_rate", "serial_num", "start_time",
+  "start_date", "dwnld_time", "dwnld_date", "batt_volt",
+  "firmware"
+))
 
 #' Write Activity Data to CSV
 #'

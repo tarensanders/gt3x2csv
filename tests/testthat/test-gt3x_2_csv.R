@@ -330,3 +330,27 @@ test_that("convert_file() works if the last row is missing", {
     sum(acti_file$accel_data[, 3])
   )
 })
+
+test_that("convert_file() skips corrupt files", {
+  skip_on_ci()
+  skip_on_cran()
+  skip_if(!file.exists(test_path("large_tests", "corrupt_file.gt3x")))
+
+  dir <- local_dir_with_files(num_files = 0)
+
+  gt3x_file <- test_path("large_tests", "corrupt_file.gt3x")
+
+  outfile <- file.path(dir, "test_corrupt.csv")
+
+  logger_thresh <- logger::log_threshold()
+  logger::log_appender(logger::appender_stdout)
+  logger::log_threshold("WARN")
+  expect_output(
+    suppressWarnings(convert_file(gt3x_file, outfile)),
+    "WARN.* Cannot convert.*"
+  )
+  logger::log_threshold(logger_thresh)
+
+  # There should be no output file
+  expect_false(file.exists(outfile))
+})
