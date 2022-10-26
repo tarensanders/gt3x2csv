@@ -87,19 +87,18 @@ validate_gt3x_files <- function(gt3x_files, proc_type) {
   logger::log_info("Validating files")
   # Validate the files
   if (proc_type == "single") {
-    if (!read.gt3x::is_gt3x(gt3x_files) |
-      !read.gt3x::have_log_and_info(gt3x_files)) {
+    if (!read.gt3x::is_gt3x(gt3x_files)) {
       err <- "{crayon::blue(gt3x_files)} is not a valid gt3x file"
       stop(glue::glue(err))
     }
   }
 
-  if (proc_type == "directory" | proc_type == "vector") {
-    valid_files <- sapply(gt3x_files, read.gt3x::have_log_and_info)
+  if (proc_type == "directory" || proc_type == "vector") {
+    valid_files <- sapply(gt3x_files, read.gt3x::is_gt3x)
 
     if (sum(valid_files) < length(gt3x_files)) {
-      failed_files <- names(valid_files[valid_files == FALSE])
-      err <- "Invalid file: {crayon::blue(failed_files)}"
+      err <-
+        "Invalid file: {crayon::blue(names(valid_files[valid_files == FALSE]))}"
       stop(glue::glue(err))
     }
   }
