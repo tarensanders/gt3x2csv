@@ -173,8 +173,19 @@ convert_file <- function(gt3x_file, outfile, actilife = FALSE) {
 
   logger::log_trace(msg)
   file_start <- Sys.time()
-  gt3x_file_read <- read.gt3x::read.gt3x(gt3x_file, imputeZeroes = TRUE)
-  if (attr(gt3x_file_read, "total_records") == 0) {
+  gt3x_file_read <- withCallingHandlers(
+    read.gt3x::read.gt3x(gt3x_file, imputeZeroes = TRUE),
+    warning = function(w) {
+      # Allow "Stop Date is 0" warning to pass
+      if (grepl("Stop Date", w$message)) {
+        invokeRestart("muffleWarning")
+      } else {
+        w$message
+      }
+    }
+  )
+  total_records <- attr(gt3x_file_read, "total_records")
+  if (!is.null(total_records) && total_records == 0) {
     msg <- glue::glue(
       "Cannot convert {crayon::blue(gt3x_file)}. ",
       "File appears to be corrupt or empty"
