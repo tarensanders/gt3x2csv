@@ -171,6 +171,10 @@ impute_missing <- function(dt, missing, start_num, sample_rate) {
     miss_row_start <-
       (as.numeric(row.names(miss_row)) - start_num) * sample_rate
 
+    if (miss_row_start == 0) miss_row_start <- 1
+
+    if (miss_row_start > nrow(dt) + 1) next
+
     miss_row_end <- miss_row_start + miss_row[, "n_missing"]
     vm <- sqrt(dt[miss_row_start, 1]^2 +
       dt[miss_row_start, 2]^2 +
