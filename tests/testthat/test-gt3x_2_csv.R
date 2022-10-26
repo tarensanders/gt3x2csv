@@ -354,3 +354,61 @@ test_that("convert_file() skips corrupt files", {
   # There should be no output file
   expect_false(file.exists(outfile))
 })
+
+test_that("convert_file() works for older versions of firmware", {
+  skip_on_ci()
+  skip_on_cran()
+  skip_if(!file.exists(test_path("large_tests", "old_format.gt3x")))
+
+  dir <- local_dir_with_files(num_files = 0)
+
+  # Read in the 'known good' files
+  acti_file <- read_proc_csv(test_path(
+    "large_tests",
+    "old_format_actilife.csv"
+  ),
+  header = TRUE,
+  accel_data = TRUE
+  )
+
+  # Process the same file in gt3x2csv
+  actilife_ver <- "ActiLife v6.11.9"
+  gt3x_file <- test_path("large_tests", "old_format.gt3x")
+
+  outfile <- file.path(dir, "test_old_format.csv")
+
+  expect_error(
+    convert_file(gt3x_file, outfile, actilife = actilife_ver),
+    NA
+  )
+
+  test_file <- read_proc_csv(outfile, header = TRUE, accel_data = TRUE)
+
+  # Check the header
+  expect_equal(test_file$header, acti_file$header)
+  # Check the accel data
+  expect_equal(
+    dim(test_file$accel_data),
+    dim(acti_file$accel_data)
+  )
+
+  expect_equal(
+    names(test_file$accel_data),
+    names(acti_file$accel_data)
+  )
+
+  expect_identical(
+    sum(test_file$accel_data[, 1]),
+    sum(acti_file$accel_data[, 1])
+  )
+
+  expect_identical(
+    sum(test_file$accel_data[, 2]),
+    sum(acti_file$accel_data[, 2])
+  )
+
+  expect_identical(
+    sum(test_file$accel_data[, 3]),
+    sum(acti_file$accel_data[, 3])
+  )
+})
