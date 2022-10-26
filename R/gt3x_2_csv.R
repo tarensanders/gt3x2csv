@@ -72,7 +72,7 @@ gt3x_2_csv <- function(gt3x_files,
     cores <- min(length(gt3x_files), parallel::detectCores() - 1)
   }
 
-  if (!parallel | proc_type == "single") {
+  if (!parallel || proc_type == "single") {
     logger::log_info("Setting up a sequential backend")
     foreach::registerDoSEQ()
   } else {
@@ -139,7 +139,7 @@ gt3x_2_csv <- function(gt3x_files,
     convert_file(gt3x_files[i], outfiles[i])
   }
 
-  if (parallel & proc_type != "single") parallel::stopCluster(cl)
+  if (parallel && proc_type != "single") parallel::stopCluster(cl)
 
   if (progress) {
     close(bar)

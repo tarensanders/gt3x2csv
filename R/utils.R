@@ -93,12 +93,12 @@ validate_gt3x_files <- function(gt3x_files, proc_type) {
     }
   }
 
-  if (proc_type == "directory" | proc_type == "vector") {
+  if (proc_type == "directory" || proc_type == "vector") {
     valid_files <- sapply(gt3x_files, read.gt3x::is_gt3x)
 
     if (sum(valid_files) < length(gt3x_files)) {
-      failed_files <- names(valid_files[valid_files == FALSE])
-      err <- "Invalid file: {crayon::blue(failed_files)}"
+      err <-
+        "Invalid file: {crayon::blue(names(valid_files[valid_files == FALSE]))}"
       stop(glue::glue(err))
     }
   }
