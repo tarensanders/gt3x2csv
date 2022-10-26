@@ -54,10 +54,10 @@ Convert a GT3X file to the raw CSV format provided by ActiLife.
 \examples{
 \dontrun{
 gt3x_2_csv(
-    gt3x_files = my_directory,
-    outdir = NULL, # Save to the same place
-    progress = FALSE, # Show a progress bar?
-    parallel = TRUE # Process files in parallel?
+  gt3x_files = my_directory,
+  outdir = NULL, # Save to the same place
+  progress = FALSE, # Show a progress bar?
+  parallel = TRUE # Process files in parallel?
 )
 }
 }
