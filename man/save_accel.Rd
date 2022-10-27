@@ -4,12 +4,14 @@
 \alias{save_accel}
 \title{Write Activity Data to CSV}
 \usage{
-save_accel(gt3x_file, outfile)
+save_accel(gt3x_file, outfile, cores)
 }
 \arguments{
 \item{gt3x_file}{An object read using \code{read.gt3x::read.gt3x()}}
 
 \item{outfile}{The path to save the resulting CSV file}
+
+\item{cores}{The number of cores allocated to parallel processing}
 }
 \value{
 Nothing
