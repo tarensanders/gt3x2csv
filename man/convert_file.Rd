@@ -4,7 +4,7 @@
 \alias{convert_file}
 \title{Convert a Single GT3X File}
 \usage{
-convert_file(gt3x_file, outfile, actilife = FALSE)
+convert_file(gt3x_file, outfile, actilife = FALSE, cores)
 }
 \arguments{
 \item{gt3x_file}{A path to a single GT3X file}
@@ -14,6 +14,8 @@ convert_file(gt3x_file, outfile, actilife = FALSE)
 \item{actilife}{The version string for the header. By default, this is
 "gt3x2csv v0.2.0". If your analysis depends on knowing an Actilife version,
 you can provide one here.}
+
+\item{cores}{The number of cores to use for parallel processing.}
 }
 \value{
 nothing

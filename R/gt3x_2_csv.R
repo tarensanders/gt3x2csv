@@ -136,7 +136,7 @@ gt3x_2_csv <- function(gt3x_files,
     .export = c("convert_file", "save_header", "save_accel"),
     .options.snow = opts
   ) %dopar% {
-    convert_file(gt3x_files[i], outfiles[i])
+    convert_file(gt3x_files[i], outfiles[i], cores = cores)
   }
 
   if (parallel && proc_type != "single") parallel::stopCluster(cl)
@@ -164,9 +164,10 @@ utils::globalVariables(c("comp_time", "comp_units"))
 #' @param actilife The version string for the header. By default, this is
 #' "gt3x2csv v0.2.0". If your analysis depends on knowing an Actilife version,
 #' you can provide one here.
+#' @param cores The number of cores to use for parallel processing.
 #'
 #' @return nothing
-convert_file <- function(gt3x_file, outfile, actilife = FALSE) {
+convert_file <- function(gt3x_file, outfile, actilife = FALSE, cores) {
   msg <- glue::glue("Starting conversion.
                     Input: {crayon::blue(gt3x_file)}
                     Output: {crayon::blue(outfile)}")
@@ -193,7 +194,7 @@ convert_file <- function(gt3x_file, outfile, actilife = FALSE) {
     logger::log_warn(msg)
   } else {
     save_header(gt3x_file_read, outfile, actilife)
-    save_accel(gt3x_file_read, outfile)
+    save_accel(gt3x_file_read, outfile, cores)
 
     comp_time <- round(
       as.numeric(difftime(Sys.time(),
@@ -284,9 +285,10 @@ utils::globalVariables(c(
 #'
 #' @param gt3x_file An object read using `read.gt3x::read.gt3x()`
 #' @param outfile The path to save the resulting CSV file
+#' @param cores The number of cores allocated to parallel processing
 #'
 #' @return Nothing
-save_accel <- function(gt3x_file, outfile) {
+save_accel <- function(gt3x_file, outfile, cores) {
   outdata <- data.table::as.data.table(gt3x_file)
   missing <- attr(gt3x_file, "missingness")
   start_num <- attr(gt3x_file, "start_time_param")
@@ -302,6 +304,7 @@ save_accel <- function(gt3x_file, outfile) {
     file = outfile,
     append = TRUE,
     delim = ",",
-    col_names = TRUE
+    col_names = TRUE,
+    num_threads = max(1, parallel::detectCores() - cores - 1)
   )
 }

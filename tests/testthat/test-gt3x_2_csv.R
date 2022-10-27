@@ -45,7 +45,8 @@ test_that("save_accel() matches a known good output", {
 
   expect_error(
     save_accel(read_gt3x_file,
-      outfile = outfile
+      outfile = outfile,
+      cores = 1
     ),
     NA
   )
@@ -75,7 +76,10 @@ test_that("convert_file() creates correct output", {
 
   outfile <- file.path(dir, "test_full.csv")
 
-  expect_error(convert_file(gt3x_file, outfile, actilife = actilife_ver), NA)
+  expect_error(convert_file(
+    gt3x_file, outfile,
+    actilife = actilife_ver, cores = 1
+  ), NA)
 
   test_full <- read_proc_csv(outfile, header = TRUE, accel_data = TRUE)
 
@@ -128,7 +132,7 @@ test_that("convert_file() works on 30hz small file", {
   outfile <- file.path(dir, "test_small.csv")
 
   expect_error(
-    convert_file(gt3x_file, outfile, actilife = actilife_ver),
+    convert_file(gt3x_file, outfile, actilife = actilife_ver, cores = 1),
     NA
   )
 
@@ -183,7 +187,7 @@ test_that("convert_file() works on 100hz medium file", {
   outfile <- file.path(dir, "test_medium.csv")
 
   expect_error(
-    convert_file(gt3x_file, outfile, actilife = actilife_ver),
+    convert_file(gt3x_file, outfile, actilife = actilife_ver, cores = 1),
     NA
   )
 
@@ -238,7 +242,7 @@ test_that("convert_file() works on 100hz large file", {
   outfile <- file.path(dir, "test_large.csv")
 
   expect_error(
-    convert_file(gt3x_file, outfile, actilife = actilife_ver),
+    convert_file(gt3x_file, outfile, actilife = actilife_ver, cores = 1),
     NA
   )
 
@@ -296,7 +300,7 @@ test_that("convert_file() works if the last row is missing", {
   outfile <- file.path(dir, "test_last_missing.csv")
 
   expect_error(
-    convert_file(gt3x_file, outfile, actilife = actilife_ver),
+    convert_file(gt3x_file, outfile, actilife = actilife_ver, cores = 1),
     NA
   )
 
@@ -346,7 +350,7 @@ test_that("convert_file() skips corrupt files", {
   logger::log_appender(logger::appender_stdout)
   logger::log_threshold("WARN")
   expect_output(
-    suppressWarnings(convert_file(gt3x_file, outfile)),
+    suppressWarnings(convert_file(gt3x_file, outfile, cores = 1)),
     "WARN.* Cannot convert.*"
   )
   logger::log_threshold(logger_thresh)
@@ -378,7 +382,7 @@ test_that("convert_file() works for older versions of firmware", {
   outfile <- file.path(dir, "test_old_format.csv")
 
   expect_error(
-    convert_file(gt3x_file, outfile, actilife = actilife_ver),
+    convert_file(gt3x_file, outfile, actilife = actilife_ver, cores = 1),
     NA
   )
 
