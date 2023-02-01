@@ -168,7 +168,7 @@ impute_missing <- function(dt, missing, start_num, sample_rate) {
     if (miss_row[, "n_missing"] == 0) next
 
     miss_row_start <-
-      (as.numeric(row.names(miss_row)) - start_num) * sample_rate
+      max((as.numeric(row.names(miss_row)) - start_num) * sample_rate, 1)
 
     if (miss_row_start > nrow(dt)) next # Missing is after the end of the data
 
