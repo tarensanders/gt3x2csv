@@ -144,6 +144,8 @@ list_agd_rec <- function(path, recursive = TRUE) {
 #' made.
 #' @param outdir Optionally provide a single directory for all CSV files to be
 #' stored in.
+#' @param type The type of file being converted. Defaults to "gt3x".
+#' @param suffix The suffix to be added to the file name. Defaults to "RAW.csv".
 #'
 #' @return A vector of file paths.
 generate_outputfiles <- function(

@@ -17,6 +17,10 @@ made.}
 
 \item{outdir}{Optionally provide a single directory for all CSV files to be
 stored in.}
+
+\item{type}{The type of file being converted. Defaults to "gt3x".}
+
+\item{suffix}{The suffix to be added to the file name. Defaults to "RAW.csv".}
 }
 \value{
 A vector of file paths.

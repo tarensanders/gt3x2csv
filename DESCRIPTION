@@ -28,6 +28,7 @@ Imports:
     logger,
     parallel,
     read.gt3x (>= 1.0.2),
+    RSQLite,
     vroom
 Suggests: 
     withr,
