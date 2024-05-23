@@ -12,7 +12,6 @@ setup_log <- function(logfile, verbose, outdir) {
   logger::log_layout(logger::layout_glue_colors)
   if (verbose) {
     logger::log_threshold("INFO")
-    logger::log_errors()
   } else {
     logger::log_threshold("WARN")
   }
@@ -42,31 +41,31 @@ setup_log <- function(logfile, verbose, outdir) {
 
 #' Check the Input Type for the Main Function
 #'
-#' Not intended to be called directly. Checks if the gt3x_files parameter is a
-#' single file, a directory, or a vector of file paths. Errors if no GT3X files
-#' are found.
+#' Not intended to be called directly. Checks if the gt3x_files or agd_files
+#' parameter is a single file, a directory, or a vector of file paths. Errors
+#' if no files are found.
 #'
-#' @param gt3x_files The parameter to be checked.
+#' @param accel_files The parameter to be checked.
 #'
 #' @return One of "single", "directory", or "vector".
-check_file_input <- function(gt3x_files) {
+check_file_input <- function(accel_files) {
   # Check if single file, vector, or directory
-  logger::log_trace("Checking what format gt3x_files is in")
+  logger::log_trace("Checking what format the files are in")
 
-  if (length(gt3x_files) == 1) {
-    if (utils::file_test("-f", gt3x_files)) {
+  if (length(accel_files) == 1) {
+    if (utils::file_test("-f", accel_files)) {
       proc_type <- "single"
-      logger::log_trace("gt3x_files is a single file")
-    } else if (utils::file_test("-d", gt3x_files)) {
+      logger::log_trace("Found a single file")
+    } else if (utils::file_test("-d", accel_files)) {
       proc_type <- "directory"
-      logger::log_trace("gt3x_files is a directory")
+      logger::log_trace("Found a directory")
     } else {
-      err <- "Could not find file or directory {crayon::blue(gt3x_files)}"
+      err <- "Could not find file or directory {crayon::blue(accel_files)}"
       stop(glue::glue(err))
     }
   } else {
     proc_type <- "vector"
-    logger::log_trace("gt3x_files is a vector")
+    logger::log_trace("Found a vector of files")
   }
 
   return(proc_type)
@@ -120,23 +119,40 @@ list_gt3x_rec <- function(path, recursive = TRUE) {
   return(files[read.gt3x::is_gt3x(files)])
 }
 
+#' Convert a Directory to a Vector of Files
+#'
+#' Searches a directory for agd files. Not intended to be called by users.
+#'
+#' @param path The path the search for files.
+#' @param recursive Should sub-folders also be searched? Defaults to TRUE.
+#'
+#' @return A vector of file paths.
+list_agd_rec <- function(path, recursive = TRUE) {
+  list.files(
+    path = path, pattern = "\\.agd$", full.names = TRUE, recursive = TRUE,
+    ignore.case = TRUE
+  )
+}
+
+
 #' Create File Names for Output Files
 #'
 #' Creates the vector of file paths that the resulting CSV files will be saved
 #' to. Not intended to be called by users.
 #'
-#' @param gt3x_files The file or files to for which output locations will be
+#' @param accel_files The file or files to for which output locations will be
 #' made.
 #' @param outdir Optionally provide a single directory for all CSV files to be
 #' stored in.
 #'
 #' @return A vector of file paths.
-generate_outputfiles <- function(gt3x_files, outdir = NULL) {
+generate_outputfiles <- function(
+    accel_files, outdir = NULL, type = "gt3x", suffix = "RAW.csv") {
   if (is.null(outdir)) {
     # Files are saved to the same place
     out_paths <- file.path(
-      dirname(gt3x_files),
-      gsub(".gt3x$", "RAW.csv", basename(gt3x_files),
+      dirname(accel_files),
+      gsub(glue::glue(".{type}$"), suffix, basename(accel_files),
         ignore.case = TRUE
       )
     )
@@ -148,7 +164,7 @@ generate_outputfiles <- function(gt3x_files, outdir = NULL) {
     }
     out_paths <- file.path(
       outdir,
-      gsub(".gt3x$", "RAW.csv", basename(gt3x_files),
+      gsub(glue::glue(".{type}$"), suffix, basename(accel_files),
         ignore.case = TRUE
       )
     )
