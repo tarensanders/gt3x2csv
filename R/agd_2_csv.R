@@ -273,7 +273,7 @@ save_agd_data <- function(con, outfile, cores, include_timestamp) {
   axis_col_names <- c("Axis1", "Axis2", "Axis3")
 
   axis_cols_exist <- intersect(axis_cols, colnames(data_table))
-  axis_data <- data_table[, axis_cols]
+  axis_data <- data_table[, axis_cols_exist]
 
   new_names <- setNames(
     axis_col_names[match(axis_cols_exist, axis_cols)], axis_cols_exist
