@@ -4,16 +4,16 @@
 \alias{check_file_input}
 \title{Check the Input Type for the Main Function}
 \usage{
-check_file_input(gt3x_files)
+check_file_input(accel_files)
 }
 \arguments{
-\item{gt3x_files}{The parameter to be checked.}
+\item{accel_files}{The parameter to be checked.}
 }
 \value{
 One of "single", "directory", or "vector".
 }
 \description{
-Not intended to be called directly. Checks if the gt3x_files parameter is a
-single file, a directory, or a vector of file paths. Errors if no GT3X files
-are found.
+Not intended to be called directly. Checks if the gt3x_files or agd_files
+parameter is a single file, a directory, or a vector of file paths. Errors
+if no files are found.
 }

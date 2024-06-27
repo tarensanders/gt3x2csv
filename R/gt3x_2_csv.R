@@ -17,7 +17,7 @@
 #' @param verbose Logical for if additional information should be displayed.
 #' Defaults to `FALSE`
 #' @param recursive If gt3x_files is a directory, should sub-folders be searched
-#' for GT3X  files?
+#' for GT3X files?
 #' @param actilife The version string for the header. By default, this is
 #' "gt3x2csv v0.2.0". If your analysis depends on knowing an Actilife version,
 #' you can provide one here.

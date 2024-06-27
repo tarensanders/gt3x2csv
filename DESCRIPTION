@@ -1,6 +1,6 @@
 Package: gt3x2csv
 Title: Converting actigraph's GT3X files to CSV files
-Version: 0.4.3
+Version: 0.5.0
 Authors@R: 
     c(person(given = "Taren",
            family = "Sanders",
@@ -17,16 +17,18 @@ BugReports: https://github.com/tarensanders/gt3x2csv/issues
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Imports: 
     crayon,
     data.table,
+    DBI,
     doSNOW,
     foreach,
     glue,
     logger,
     parallel,
     read.gt3x (>= 1.0.2),
+    RSQLite,
     vroom
 Suggests: 
     withr,

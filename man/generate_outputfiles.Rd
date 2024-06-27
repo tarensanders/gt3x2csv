@@ -4,14 +4,23 @@
 \alias{generate_outputfiles}
 \title{Create File Names for Output Files}
 \usage{
-generate_outputfiles(gt3x_files, outdir = NULL)
+generate_outputfiles(
+  accel_files,
+  outdir = NULL,
+  type = "gt3x",
+  suffix = "RAW.csv"
+)
 }
 \arguments{
-\item{gt3x_files}{The file or files to for which output locations will be
+\item{accel_files}{The file or files to for which output locations will be
 made.}
 
 \item{outdir}{Optionally provide a single directory for all CSV files to be
 stored in.}
+
+\item{type}{The type of file being converted. Defaults to "gt3x".}
+
+\item{suffix}{The suffix to be added to the file name. Defaults to "RAW.csv".}
 }
 \value{
 A vector of file paths.
