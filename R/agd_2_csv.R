@@ -269,8 +269,17 @@ save_agd_data <- function(con, outfile, cores, include_timestamp) {
   logger::log_trace("Extracting data")
   data_table <- DBI::dbReadTable(con, "data")
 
-  axis_data <- data_table[, c("axis1", "axis2", "axis3")]
-  names(axis_data) <- c("Axis1", "Axis2", "Axis3")
+  axis_cols <- c("axis1", "axis2", "axis3")
+  axis_col_names <- c("Axis1", "Axis2", "Axis3")
+
+  axis_cols_exist <- intersect(axis_cols, colnames(data_table))
+  axis_data <- data_table[, axis_cols]
+
+  new_names <- setNames(
+    axis_col_names[match(axis_cols_exist, axis_cols)], axis_cols_exist
+  )
+
+  names(axis_data) <- new_names
 
   # Write the data to the outfile
   logger::log_trace("Writing activity to CSV")
