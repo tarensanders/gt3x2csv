@@ -7,7 +7,7 @@
 #' @param outdir A directory where converted CSV files will be saved. If NULL,
 #' the files are saved in the same directory as the original files.
 #' @param progress Display a progress bar. Defaults to TRUE.
-#' @param parallel Use a parallel backend. Defaults to TRUE.
+#' @param parallel Use a parallel backend. Defaults to FALSE.
 #' @param cores If `parallel == TRUE`, how many cores are used for processing.
 #' By default this is the smaller of the number of cores available minus 1, or
 #' the number of files to process.
@@ -65,10 +65,6 @@ agd_2_csv <- function(
     )
     cl <- parallel::makeCluster(cores)
     doSNOW::registerDoSNOW(cl)
-    parallel::clusterExport(
-      cl,
-      c("convert_agd_file", "save_agd_header", "save_agd_data")
-    )
   }
 
   # Setup progress bar
