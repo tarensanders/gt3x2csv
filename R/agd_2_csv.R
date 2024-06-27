@@ -65,10 +65,6 @@ agd_2_csv <- function(
     )
     cl <- parallel::makeCluster(cores)
     doSNOW::registerDoSNOW(cl)
-    parallel::clusterExport(
-      cl,
-      c("convert_agd_file", "save_agd_header", "save_agd_data")
-    )
   }
 
   # Setup progress bar
