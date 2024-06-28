@@ -4,7 +4,7 @@
 \alias{save_agd_data}
 \title{Write Activity Data to CSV}
 \usage{
-save_agd_data(con, outfile, cores, include_timestamp)
+save_agd_data(con, outfile, cores, include_timestamp, vm)
 }
 \arguments{
 \item{con}{The connection to the agd file established by \code{DBI::dbConnect()}}
@@ -15,6 +15,8 @@ save_agd_data(con, outfile, cores, include_timestamp)
 
 \item{include_timestamp}{Should the timestamp column be included in the
 output?}
+
+\item{vm}{Should the vector magnitude column be included?}
 }
 \value{
 Nothing
