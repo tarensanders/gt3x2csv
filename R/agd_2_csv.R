@@ -119,7 +119,7 @@ agd_2_csv <- function(
     .export = c("convert_agd_file", "save_agd_header", "save_agd_data"),
     .options.snow = opts
   ) %dopar% {
-    convert_agd_file(agd_files[i], outfiles[i], cores = cores)
+    convert_agd_file(agd_files[i], outfiles[i], cores = cores, vm = vm)
   }
 
   if (parallel && proc_type != "single") parallel::stopCluster(cl)
