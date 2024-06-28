@@ -8,6 +8,7 @@ convert_agd_file(
   agd_file,
   outfile,
   cores,
+  vm,
   dateformat = "\%Y-\%m-\%d",
   include_timestamp = FALSE
 )
@@ -18,6 +19,8 @@ convert_agd_file(
 \item{outfile}{The path to save the resulting CSV file}
 
 \item{cores}{The number of cores to use for parallel processing.}
+
+\item{vm}{Should the vector magnitude column be included?}
 
 \item{dateformat}{The format to use for the date string in the header.}
 

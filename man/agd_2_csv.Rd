@@ -7,6 +7,7 @@
 agd_2_csv(
   agd_files,
   outdir = NULL,
+  vm = TRUE,
   progress = FALSE,
   parallel = TRUE,
   cores = NULL,
@@ -22,9 +23,11 @@ path to a single file, a path to a directory, or a vector of file paths.}
 \item{outdir}{A directory where converted CSV files will be saved. If NULL,
 the files are saved in the same directory as the original files.}
 
+\item{vm}{Should the vector magnitude column be included? Defaults to TRUE.}
+
 \item{progress}{Display a progress bar. Defaults to TRUE.}
 
-\item{parallel}{Use a parallel backend. Defaults to TRUE.}
+\item{parallel}{Use a parallel backend. Defaults to FALSE.}
 
 \item{cores}{If \code{parallel == TRUE}, how many cores are used for processing.
 By default this is the smaller of the number of cores available minus 1, or
@@ -37,8 +40,8 @@ location), or a path for where to store the log file.}
 \item{verbose}{Logical for if additional information should be displayed.
 Defaults to \code{FALSE}}
 
-\item{recursive}{If agd_files is a directory, should sub-folders be searched
-for agd files?}
+\item{recursive}{If agd_files is a directory, should
+sub-folders be searched for agd files?}
 }
 \value{
 Nothing. Files are saved as a side effect.
