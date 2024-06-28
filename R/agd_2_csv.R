@@ -6,6 +6,7 @@
 #' path to a single file, a path to a directory, or a vector of file paths.
 #' @param outdir A directory where converted CSV files will be saved. If NULL,
 #' the files are saved in the same directory as the original files.
+#' @param vm Should the vector magnitude column be included? Defaults to TRUE.
 #' @param progress Display a progress bar. Defaults to TRUE.
 #' @param parallel Use a parallel backend. Defaults to FALSE.
 #' @param cores If `parallel == TRUE`, how many cores are used for processing.
@@ -16,8 +17,8 @@
 #' location), or a path for where to store the log file.
 #' @param verbose Logical for if additional information should be displayed.
 #' Defaults to `FALSE`
-#' @param recursive If agd_files is a directory, should sub-folders be searched
-#' for agd files?
+#' @param recursive If agd_files is a directory, should
+#' sub-folders be searched for agd files?
 #'
 #' @importFrom foreach %dopar%
 #'
@@ -34,8 +35,8 @@
 #' )
 #' }
 agd_2_csv <- function(
-    agd_files, outdir = NULL, progress = FALSE, parallel = TRUE, cores = NULL,
-    logfile = FALSE, verbose = FALSE, recursive = TRUE) {
+    agd_files, outdir = NULL, vm = TRUE, progress = FALSE, parallel = TRUE,
+    cores = NULL, logfile = FALSE, verbose = FALSE, recursive = TRUE) {
   start_proc_time <- Sys.time()
   setup_log(logfile, verbose, outdir)
 
@@ -144,13 +145,15 @@ agd_2_csv <- function(
 #' @param agd_file A path to a single agd file
 #' @param outfile The path to save the resulting CSV file
 #' @param cores The number of cores to use for parallel processing.
+#' @param vm Should the vector magnitude column be included?
 #' @param dateformat The format to use for the date string in the header.
 #' @param include_timestamp Should the timestamp column be included in the
 #' output?
 #'
 #' @return nothing
-convert_agd_file <- function(agd_file, outfile, cores, dateformat = "%Y-%m-%d",
-                             include_timestamp = FALSE) {
+convert_agd_file <- function(
+    agd_file, outfile, cores, vm, dateformat = "%Y-%m-%d",
+    include_timestamp = FALSE) {
   msg <- glue::glue("Starting conversion.
                     Input: {crayon::blue(agd_file)}
                     Output: {crayon::blue(outfile)}")
@@ -159,7 +162,7 @@ convert_agd_file <- function(agd_file, outfile, cores, dateformat = "%Y-%m-%d",
 
   con <- DBI::dbConnect(RSQLite::SQLite(), agd_file)
   save_agd_header(con, outfile, dateformat)
-  save_agd_data(con, outfile, cores, include_timestamp)
+  save_agd_data(con, outfile, cores, include_timestamp, vm)
   DBI::dbDisconnect(con)
 
   comp_time <- round(
@@ -258,9 +261,10 @@ save_agd_header <- function(con, outfile, dateformat) {
 #' @param cores The number of cores allocated to parallel processing
 #' @param include_timestamp Should the timestamp column be included in the
 #' output?
+#' @param vm Should the vector magnitude column be included?
 #'
 #' @return Nothing
-save_agd_data <- function(con, outfile, cores, include_timestamp) {
+save_agd_data <- function(con, outfile, cores, include_timestamp, vm) {
   # TODO: Option to include the timestamp column in the output
   logger::log_trace("Extracting data")
   data_table <- DBI::dbReadTable(con, "data")
@@ -274,6 +278,11 @@ save_agd_data <- function(con, outfile, cores, include_timestamp) {
   new_names <- axis_col_names[match(axis_cols_exist, axis_cols)]
 
   colnames(axis_data) <- new_names
+
+  if (vm) {
+    logger::log_trace("Calculating vector magnitude")
+    axis_data$vm <- sqrt(rowSums(axis_data^2))
+  }
 
   # Write the data to the outfile
   logger::log_trace("Writing activity to CSV")
